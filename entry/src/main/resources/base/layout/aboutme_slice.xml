@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_parent"
+    ohos:width="match_parent"
+    ohos:alignment="center"
+    ohos:orientation="vertical">
+    <Text
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:text_size="20fp"
+        ohos:text="About Me">
+    </Text>
+    <Button
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:text="BACK"
+        ohos:text_size="40fp"
+        ohos:id="$+id:btn_back">
+
+    </Button>
+
+
+
+</DirectionalLayout>
