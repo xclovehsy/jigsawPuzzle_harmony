@@ -9,6 +9,7 @@ import ohos.agp.components.Component;
 public class SelectSlice extends AbilitySlice implements Component.ClickedListener {
     private Button btn_back, btn_play;
     private int diff;
+    private String jigsawName = "ultraman";
 
     @Override
     public void onStart(Intent intent) {
@@ -50,6 +51,7 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
             if(diff == 4){
                 AbilitySlice slice = new PlayFourSlice();
                 Intent intent = new Intent();
+                intent.setParam("jigsawName", jigsawName);
                 present(slice, intent);
             }
         }

@@ -1,16 +1,139 @@
 <?xml version="1.0" encoding="utf-8"?>
-<DirectionalLayout
+<DependentLayout
     xmlns:ohos="http://schemas.huawei.com/res/ohos"
     ohos:height="match_parent"
     ohos:width="match_parent"
-    ohos:orientation="vertical">
+    ohos:orientation="vertical"
+    >
 
-    <Text
+    <Image
+        ohos:top_margin="50fp"
+        ohos:left_margin="50fp"
+        ohos:id="$+id:blank11"
+        ohos:height="120fp"
+        ohos:width="120fp"
+        ohos:background_element="$media:question">
+    </Image>
+
+    <Image
+        ohos:id="$+id:blank12"
+        ohos:right_of="$id:blank11"
+        ohos:top_margin="50fp"
+        ohos:left_margin="5fp"
+        ohos:height="120fp"
+        ohos:width="120fp"
+        ohos:background_element="$media:question">
+    </Image>
+
+    <Image
+        ohos:id="$+id:blank21"
+        ohos:below="$id:blank11"
+        ohos:left_margin="50fp"
+        ohos:top_margin="5fp"
+        ohos:height="120fp"
+        ohos:width="120fp"
+        ohos:background_element="$media:question">
+    </Image>
+
+    <Image
+        ohos:id="$+id:blank22"
+        ohos:below="$id:blank12"
+        ohos:right_of="$id:blank21"
+        ohos:top_margin="5fp"
+        ohos:left_margin="5fp"
+        ohos:height="120fp"
+        ohos:width="120fp"
+        ohos:background_element="$media:question">
+    </Image>
+
+    <Image
+        ohos:height="120fp"
+        ohos:width="120fp"
+        ohos:top_margin="320fp"
+        ohos:left_margin="102fp"
+        ohos:id="$+id:chip1"
+        ohos:scale_mode="stretch"
+        ohos:background_element="$media:dog411"
+        >
+    </Image>
+
+    <Image
+        ohos:height="120fp"
+        ohos:width="120fp"
+        ohos:top_margin="350fp"
+        ohos:left_margin="25fp"
+        ohos:id="$+id:chip2"
+        ohos:scale_mode="stretch"
+        ohos:background_element="$media:dog412"
+        >
+    </Image>
+
+
+    <Image
+        ohos:height="120fp"
+        ohos:width="120fp"
+        ohos:top_margin="450fp"
+        ohos:left_margin="102fp"
+        ohos:id="$+id:chip3"
+        ohos:scale_mode="stretch"
+        ohos:background_element="$media:dog422"
+        >
+    </Image>
+
+
+    <Image
+        ohos:height="120fp"
+        ohos:width="120fp"
+        ohos:top_margin="389fp"
+        ohos:left_margin="202fp"
+        ohos:id="$+id:chip4"
+        ohos:scale_mode="stretch"
+        ohos:background_element="$media:dog422"
+        >
+    </Image>
+
+    <Button
         ohos:height="match_content"
         ohos:width="match_content"
-        ohos:text="play4_slice"
+        ohos:top_margin="400fp"
+        ohos:left_margin="250fp"
+        ohos:id="$+id:btn_begin"
+        ohos:text="开始"
+        ohos:text_size="30fp">
+    </Button>
+
+    <Button
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:id="$+id:btn_tip"
+        ohos:left_margin="250fp"
+        ohos:top_margin="1fp"
+        ohos:below="$id:btn_begin"
+        ohos:text="提示"
+        ohos:text_size="30fp">
+    </Button>
+
+
+    <TickTimer
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:id="$+id:ticktimer"
+        ohos:left_margin="120fp"
         ohos:text_size="30fp">
 
-    </Text>
+    </TickTimer>
 
-</DirectionalLayout>
+    <Image
+        ohos:height="200fp"
+        ohos:width="200fp"
+        ohos:id="$+id:tip"
+        ohos:scale_mode="stretch"
+        >
+
+    </Image>
+
+
+
+
+
+</DependentLayout>

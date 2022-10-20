@@ -17,6 +17,8 @@
         ohos:text="请选择拼图图案"
         ohos:text_size="30fp">
     </Text>
+    <
+
     <Text
         ohos:height="match_content"
         ohos:width="match_content"
