@@ -17,7 +17,12 @@
         ohos:text="请选择拼图图案"
         ohos:text_size="30fp">
     </Text>
-    <
+
+    <PageSlider
+        ohos:id="$+id:page_slider"
+        ohos:height="300vp"
+        ohos:width="300vp"
+        ohos:layout_alignment="horizontal_center"/>
 
     <Text
         ohos:height="match_content"
