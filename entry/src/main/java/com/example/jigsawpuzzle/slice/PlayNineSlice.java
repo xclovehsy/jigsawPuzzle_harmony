@@ -15,31 +15,32 @@ import ohos.multimodalinput.event.TouchEvent;
 
 import javax.sql.CommonDataSource;
 import java.util.*;
+import java.util.jar.JarInputStream;
 
 
-public class PlayFourSlice extends AbilitySlice {
+public class PlayNineSlice extends AbilitySlice {
     static final HiLogLabel label = new HiLogLabel(HiLog.LOG_APP,0,"MY_TAG");
     private Image chip1, chip2, chip3, chip4, tip;
     //    private Image blank11, blank12, blank21, blank22;
     private List<Blank> BlankList = new LinkedList<>();
-    private int[] imgIds = {ResourceTable.Media_dog411, ResourceTable.Media_dog412, ResourceTable.Media_dog421, ResourceTable.Media_dog422};
-    private int[] chipIds = {ResourceTable.Id_chip1, ResourceTable.Id_chip2, ResourceTable.Id_chip3, ResourceTable.Id_chip4};
-    private int tipId = ResourceTable.Media_dog;
+    private int[] imgIds = {ResourceTable.Media_doraemon911, ResourceTable.Media_doraemon912, ResourceTable.Media_doraemon913, ResourceTable.Media_doraemon921, ResourceTable.Media_doraemon922, ResourceTable.Media_doraemon923, ResourceTable.Media_doraemon931, ResourceTable.Media_doraemon932,ResourceTable.Media_doraemon933};
+    private int[] chipIds = {ResourceTable.Id_chip1, ResourceTable.Id_chip2, ResourceTable.Id_chip3, ResourceTable.Id_chip4, ResourceTable.Id_chip5, ResourceTable.Id_chip6, ResourceTable.Id_chip7, ResourceTable.Id_chip8, ResourceTable.Id_chip9};
+    private int tipId = ResourceTable.Media_doraemon;
     private Map<Integer, Chip> chipMap = new HashMap<>();
-    private int chipCnt = 4;
+    private int chipCnt = 9;
     private List<Image> imageList = new LinkedList<>();
-//    private float[] chipX = {760, 387, 417, 74};
+    //    private float[] chipX = {760, 387, 417, 74};
     private float maxChipX = 760, minChipX=74, maxChipY=1555, minChipY=1172;
-//    private float[] chipY = {1283, 1172, 1555, 1294};
+    //    private float[] chipY = {1283, 1172, 1555, 1294};
     private Button btn_begin, btn_tip;
-    private String jigsawName = "dog";
+    private String jigsawName = "doraemon";
     private TickTimer tickTimer;
     long startTime = 0, passTime = 0;
 
     @Override
     public void onStart(Intent intent) {
         super.onStart(intent);
-        super.setUIContent(ResourceTable.Layout_playfour_slice);
+        super.setUIContent(ResourceTable.Layout_playnine_slice);
         jigsawName = intent.getStringParam("jigsawName");
 
         Image image = findComponentById(ResourceTable.Id_chip1);
@@ -83,8 +84,8 @@ public class PlayFourSlice extends AbilitySlice {
                 tickTimer.start();
                 tickTimer.setVisibility(Component.VISIBLE);
 
-                //重新设置chip的位置
                 relocateChipPosition();
+
                 // 设置图片可见
                 for (Chip chip: chipMap.values()){
                     chip.getImage().setVisibility(Component.VISIBLE);
@@ -174,9 +175,6 @@ public class PlayFourSlice extends AbilitySlice {
         }
         tickTimer.setVisibility(Component.INVISIBLE);
 
-        // 重新设置chip的位置
-//        relocateChipPosition();
-
         // 重新设置chip的图片
         setChip();
     }
@@ -253,80 +251,136 @@ public class PlayFourSlice extends AbilitySlice {
      * 初始化组件
      */
     void initComponent() {
+        HiLog.info(label, "nineSlice_jigsawName=" + jigsawName);
 
         if(jigsawName.equals("dog")) {
-            imgIds[0] = ResourceTable.Media_dog411;
-            imgIds[1] = ResourceTable.Media_dog412;
-            imgIds[2] = ResourceTable.Media_dog421;
-            imgIds[3] = ResourceTable.Media_dog422;
+            imgIds[0] = ResourceTable.Media_dog911;
+            imgIds[1] = ResourceTable.Media_dog912;
+            imgIds[2] = ResourceTable.Media_dog913;
+            imgIds[3] = ResourceTable.Media_dog921;
+            imgIds[4] = ResourceTable.Media_dog922;
+            imgIds[5] = ResourceTable.Media_dog923;
+            imgIds[6] = ResourceTable.Media_dog931;
+            imgIds[7] = ResourceTable.Media_dog932;
+            imgIds[8] = ResourceTable.Media_dog933;
             tipId = ResourceTable.Media_dog;
         }else if(jigsawName.equals("ultraman")) {
-            imgIds[0] = ResourceTable.Media_ultraman411;
-            imgIds[1] = ResourceTable.Media_ultraman412;
-            imgIds[2] = ResourceTable.Media_ultraman421;
-            imgIds[3] = ResourceTable.Media_ultraman422;
+            imgIds[0] = ResourceTable.Media_ultraman911;
+            imgIds[1] = ResourceTable.Media_ultraman912;
+            imgIds[2] = ResourceTable.Media_ultraman913;
+            imgIds[3] = ResourceTable.Media_ultraman921;
+            imgIds[4] = ResourceTable.Media_ultraman922;
+            imgIds[5] = ResourceTable.Media_ultraman923;
+            imgIds[6] = ResourceTable.Media_ultraman931;
+            imgIds[7] = ResourceTable.Media_ultraman932;
+            imgIds[8] = ResourceTable.Media_ultraman933;
             tipId = ResourceTable.Media_ultraman;
         }else if(jigsawName.equals("doraemon")){
-            imgIds[0] = ResourceTable.Media_doraemon411;
-            imgIds[1] = ResourceTable.Media_doraemon412;
-            imgIds[2] = ResourceTable.Media_doraemon421;
-            imgIds[3] = ResourceTable.Media_doraemon422;
+            imgIds[0] = ResourceTable.Media_doraemon911;
+            imgIds[1] = ResourceTable.Media_doraemon912;
+            imgIds[2] = ResourceTable.Media_doraemon913;
+            imgIds[3] = ResourceTable.Media_doraemon921;
+            imgIds[4] = ResourceTable.Media_doraemon922;
+            imgIds[5] = ResourceTable.Media_doraemon923;
+            imgIds[6] = ResourceTable.Media_doraemon931;
+            imgIds[7] = ResourceTable.Media_doraemon932;
+            imgIds[8] = ResourceTable.Media_doraemon933;
             tipId = ResourceTable.Media_doraemon;
         }else if(jigsawName.equals("hellokitty")){
-            imgIds[0] = ResourceTable.Media_hellokitty411;
-            imgIds[1] = ResourceTable.Media_hellokitty412;
-            imgIds[2] = ResourceTable.Media_hellokitty421;
-            imgIds[3] = ResourceTable.Media_hellokitty422;
+            imgIds[0] = ResourceTable.Media_hellokitty911;
+            imgIds[1] = ResourceTable.Media_hellokitty912;
+            imgIds[2] = ResourceTable.Media_hellokitty913;
+            imgIds[3] = ResourceTable.Media_hellokitty921;
+            imgIds[4] = ResourceTable.Media_hellokitty922;
+            imgIds[5] = ResourceTable.Media_hellokitty923;
+            imgIds[6] = ResourceTable.Media_hellokitty931;
+            imgIds[7] = ResourceTable.Media_hellokitty932;
+            imgIds[8] = ResourceTable.Media_hellokitty933;
             tipId = ResourceTable.Media_hellokitty;
 
         }else if(jigsawName.equals("mickey")){
-            imgIds[0] = ResourceTable.Media_mickey411;
-            imgIds[1] = ResourceTable.Media_mickey412;
-            imgIds[2] = ResourceTable.Media_mickey421;
-            imgIds[3] = ResourceTable.Media_mickey422;
+            imgIds[0] = ResourceTable.Media_mickey911;
+            imgIds[1] = ResourceTable.Media_mickey912;
+            imgIds[2] = ResourceTable.Media_mickey913;
+            imgIds[3] = ResourceTable.Media_mickey921;
+            imgIds[4] = ResourceTable.Media_mickey922;
+            imgIds[5] = ResourceTable.Media_mickey923;
+            imgIds[6] = ResourceTable.Media_mickey931;
+            imgIds[7] = ResourceTable.Media_mickey932;
+            imgIds[8] = ResourceTable.Media_mickey933;
             tipId = ResourceTable.Media_mickey;
 
         }else if(jigsawName.equals("minion")){
-            imgIds[0] = ResourceTable.Media_minion411;
-            imgIds[1] = ResourceTable.Media_minion412;
-            imgIds[2] = ResourceTable.Media_minion421;
-            imgIds[3] = ResourceTable.Media_minion422;
+            imgIds[0] = ResourceTable.Media_minion911;
+            imgIds[1] = ResourceTable.Media_minion912;
+            imgIds[2] = ResourceTable.Media_minion913;
+            imgIds[3] = ResourceTable.Media_minion921;
+            imgIds[4] = ResourceTable.Media_minion922;
+            imgIds[5] = ResourceTable.Media_minion923;
+            imgIds[6] = ResourceTable.Media_minion931;
+            imgIds[7] = ResourceTable.Media_minion932;
+            imgIds[8] = ResourceTable.Media_minion933;
             tipId = ResourceTable.Media_minion;
 
         }else if(jigsawName.equals("snoopy")){
-            imgIds[0] = ResourceTable.Media_snoopy411;
-            imgIds[1] = ResourceTable.Media_snoopy412;
-            imgIds[2] = ResourceTable.Media_snoopy421;
-            imgIds[3] = ResourceTable.Media_snoopy422;
+            imgIds[0] = ResourceTable.Media_snoopy911;
+            imgIds[1] = ResourceTable.Media_snoopy912;
+            imgIds[2] = ResourceTable.Media_snoopy913;
+            imgIds[3] = ResourceTable.Media_snoopy921;
+            imgIds[4] = ResourceTable.Media_snoopy922;
+            imgIds[5] = ResourceTable.Media_snoopy923;
+            imgIds[6] = ResourceTable.Media_snoopy931;
+            imgIds[7] = ResourceTable.Media_snoopy932;
+            imgIds[8] = ResourceTable.Media_snoopy933;
             tipId = ResourceTable.Media_snoopy;
 
         }else if(jigsawName.equals("snow")){
-            imgIds[0] = ResourceTable.Media_snow411;
-            imgIds[1] = ResourceTable.Media_snow412;
-            imgIds[2] = ResourceTable.Media_snow421;
-            imgIds[3] = ResourceTable.Media_snow422;
+            imgIds[0] = ResourceTable.Media_snow911;
+            imgIds[1] = ResourceTable.Media_snow912;
+            imgIds[2] = ResourceTable.Media_snow913;
+            imgIds[3] = ResourceTable.Media_snow921;
+            imgIds[4] = ResourceTable.Media_snow922;
+            imgIds[5] = ResourceTable.Media_snow923;
+            imgIds[6] = ResourceTable.Media_snow931;
+            imgIds[7] = ResourceTable.Media_snow932;
+            imgIds[8] = ResourceTable.Media_snow933;
             tipId = ResourceTable.Media_snow;
 
         }else if(jigsawName.equals("spongebob")){
-            imgIds[0] = ResourceTable.Media_spongebob411;
-            imgIds[1] = ResourceTable.Media_spongebob412;
-            imgIds[2] = ResourceTable.Media_spongebob421;
-            imgIds[3] = ResourceTable.Media_spongebob422;
+            imgIds[0] = ResourceTable.Media_spongebob911;
+            imgIds[1] = ResourceTable.Media_spongebob912;
+            imgIds[2] = ResourceTable.Media_spongebob913;
+            imgIds[3] = ResourceTable.Media_spongebob921;
+            imgIds[4] = ResourceTable.Media_spongebob922;
+            imgIds[5] = ResourceTable.Media_spongebob923;
+            imgIds[6] = ResourceTable.Media_spongebob931;
+            imgIds[7] = ResourceTable.Media_spongebob932;
+            imgIds[8] = ResourceTable.Media_spongebob933;
             tipId = ResourceTable.Media_spongebob;
 
         }else if(jigsawName.equals("winnie")){
-            imgIds[0] = ResourceTable.Media_winnie411;
-            imgIds[1] = ResourceTable.Media_winnie412;
-            imgIds[2] = ResourceTable.Media_winnie421;
-            imgIds[3] = ResourceTable.Media_winnie422;
+            imgIds[0] = ResourceTable.Media_winnie911;
+            imgIds[1] = ResourceTable.Media_winnie912;
+            imgIds[2] = ResourceTable.Media_winnie913;
+            imgIds[3] = ResourceTable.Media_winnie921;
+            imgIds[4] = ResourceTable.Media_winnie922;
+            imgIds[5] = ResourceTable.Media_winnie923;
+            imgIds[6] = ResourceTable.Media_winnie931;
+            imgIds[7] = ResourceTable.Media_winnie932;
+            imgIds[8] = ResourceTable.Media_winnie933;
             tipId = ResourceTable.Media_winnie;
 
         }else{
-            imgIds[0] = ResourceTable.Media_dog411;
-            imgIds[1] = ResourceTable.Media_dog412;
-            imgIds[2] = ResourceTable.Media_dog421;
-            imgIds[3] = ResourceTable.Media_dog422;
-            tipId = ResourceTable.Media_dog;
+            imgIds[0] = ResourceTable.Media_doraemon911;
+            imgIds[1] = ResourceTable.Media_doraemon912;
+            imgIds[2] = ResourceTable.Media_doraemon913;
+            imgIds[3] = ResourceTable.Media_doraemon921;
+            imgIds[4] = ResourceTable.Media_doraemon922;
+            imgIds[5] = ResourceTable.Media_doraemon923;
+            imgIds[6] = ResourceTable.Media_doraemon931;
+            imgIds[7] = ResourceTable.Media_doraemon932;
+            imgIds[8] = ResourceTable.Media_doraemon933;
+            tipId = ResourceTable.Media_doraemon;
         }
 
         btn_begin = findComponentById(ResourceTable.Id_btn_begin);
@@ -346,14 +400,19 @@ public class PlayFourSlice extends AbilitySlice {
         for(int chipid: chipIds){
             imageList.add(findComponentById(chipid));
         }
-//        relocateChipPosition();
+
 
         // 初始化空白
         BlankList.clear();
         BlankList.add(new Blank(findComponentById(ResourceTable.Id_blank11), 1, 1));
         BlankList.add(new Blank(findComponentById(ResourceTable.Id_blank12), 1, 2));
+        BlankList.add(new Blank(findComponentById(ResourceTable.Id_blank13), 1, 3));
         BlankList.add(new Blank(findComponentById(ResourceTable.Id_blank21), 2, 1));
         BlankList.add(new Blank(findComponentById(ResourceTable.Id_blank22), 2, 2));
+        BlankList.add(new Blank(findComponentById(ResourceTable.Id_blank23), 2, 3));
+        BlankList.add(new Blank(findComponentById(ResourceTable.Id_blank31), 3, 1));
+        BlankList.add(new Blank(findComponentById(ResourceTable.Id_blank32), 3, 2));
+        BlankList.add(new Blank(findComponentById(ResourceTable.Id_blank33), 3, 3));
     }
 
     /**
@@ -366,7 +425,7 @@ public class PlayFourSlice extends AbilitySlice {
         // 打乱chipView顺序
         Random random = new Random();
         random.setSeed(System.currentTimeMillis());
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < 10; i++) {
             int a = Math.abs(random.nextInt()) % chipCnt;
             int b = Math.abs(random.nextInt()) % chipCnt;
             int temp = chipIds[a];
@@ -377,8 +436,8 @@ public class PlayFourSlice extends AbilitySlice {
         // 设置chip背景图片
         int k = 0;
         chipMap.clear();
-        for(int i = 1; i<= 2; i++){
-            for(int j = 1; j<= 2; j++, k++){
+        for(int i = 1; i<= 3; i++){
+            for(int j = 1; j<= 3; j++, k++){
                 // 获取组件
                 Image chipView = findComponentById(chipIds[k]);
                 chipView.setPixelMap(imgIds[k]);
@@ -386,11 +445,13 @@ public class PlayFourSlice extends AbilitySlice {
                 chipMap.put(chipIds[k], new Chip(i, j, chipView, chipIds[k]));
             }
         }
+        HiLog.info(label, "chipMapSize=" + chipMap.size());
 
         // 设置图片不可见
         for (Chip chip: chipMap.values()){
             chip.getImage().setVisibility(Component.INVISIBLE);
         }
+
     }
 
     /**
@@ -427,5 +488,7 @@ public class PlayFourSlice extends AbilitySlice {
             imageList.get(i).setContentPositionY(y);
         }
     }
+
+
 }
 

@@ -31,6 +31,26 @@
         ohos:text_size="30fp">
     </Text>
 
+    <RadioContainer
+        ohos:id="$+id:radio_container"
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:orientation="horizontal"
+        ohos:layout_alignment="horizontal_center">
+        <RadioButton
+            ohos:id="$+id:radio_button_easy"
+            ohos:height="40vp"
+            ohos:width="match_content"
+            ohos:text="Easy"
+            ohos:text_size="14fp"/>
+        <RadioButton
+            ohos:id="$+id:radio_button_hard"
+            ohos:height="40vp"
+            ohos:width="match_content"
+            ohos:text="Hard"
+            ohos:text_size="14fp"/>
+    </RadioContainer>
+
     <Button
         ohos:height="match_content"
         ohos:width="match_content"

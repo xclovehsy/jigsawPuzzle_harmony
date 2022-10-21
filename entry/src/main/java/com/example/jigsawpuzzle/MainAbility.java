@@ -2,6 +2,8 @@ package com.example.jigsawpuzzle;
 
 import com.example.jigsawpuzzle.slice.MainAbilitySlice;
 import com.example.jigsawpuzzle.slice.PlayFourSlice;
+import com.example.jigsawpuzzle.slice.PlayNineSlice;
+import com.example.jigsawpuzzle.slice.SelectSlice;
 import ohos.aafwk.ability.Ability;
 import ohos.aafwk.content.Intent;
 
@@ -11,5 +13,9 @@ public class MainAbility extends Ability {
         super.onStart(intent);
         super.setMainRoute(MainAbilitySlice.class.getName());
 //        super.setMainRoute(PlayFourSlice.class.getName());
+//        super.setMainRoute(PlayNineSlice.class.getName());
+        super.setMainRoute(SelectSlice.class.getName());
+
+
     }
 }

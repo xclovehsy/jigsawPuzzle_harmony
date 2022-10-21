@@ -12,12 +12,14 @@ import java.util.List;
 
 public class TestPageProvider extends PageSliderProvider {
     //数据实体类
-    public static class DataItem{
-        String mText;
-        public DataItem(String txt) {
-            mText = txt;
+    public static class DataItem {
+        int mimage;
+
+        public DataItem(int image) {
+            mimage = image;
         }
     }
+
     // 数据源，每个页面对应list中的一项
     private List<DataItem> list;
     private Context mContext;
@@ -26,34 +28,38 @@ public class TestPageProvider extends PageSliderProvider {
         this.list = list;
         this.mContext = context;
     }
+
     @Override
     public int getCount() {
         return list.size();
     }
+
     @Override
     public Object createPageInContainer(ComponentContainer componentContainer, int i) {
         final DataItem data = list.get(i);
-        Text label = new Text(null);
-        label.setTextAlignment(TextAlignment.CENTER);
-        label.setLayoutConfig(
+
+        Image image = new Image(mContext);
+        image.setLayoutConfig(
                 new StackLayout.LayoutConfig(
                         ComponentContainer.LayoutConfig.MATCH_PARENT,
                         ComponentContainer.LayoutConfig.MATCH_PARENT
                 ));
-        label.setText(data.mText);
-        label.setTextColor(Color.BLACK);
-        label.setTextSize(50);
-        label.setMarginsLeftAndRight(24, 24);
-        label.setMarginsTopAndBottom(24, 24);
+        image.setMarginsLeftAndRight(24, 24);
+        image.setMarginsTopAndBottom(24, 24);
+        image.setImageAndDecodeBounds(data.mimage);
+        image.setScaleMode(Image.ScaleMode.STRETCH);
         ShapeElement element = new ShapeElement(mContext, ResourceTable.Graphic_background_page);
-        label.setBackground(element);
-        componentContainer.addComponent(label);
-        return label;
+        image.setBackground(element);
+
+        componentContainer.addComponent(image);
+        return image;
     }
+
     @Override
     public void destroyPageFromContainer(ComponentContainer componentContainer, int i, Object o) {
         componentContainer.removeComponent((Component) o);
     }
+
     @Override
     public boolean isPageMatchToObject(Component component, Object o) {
         //可添加具体处理逻辑
