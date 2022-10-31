@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_content"
+    ohos:width="match_parent"
+    ohos:alignment="horizontal_center"
+    ohos:orientation="vertical">
+
+    <Text
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:layout_alignment="horizontal_center"
+        ohos:text="请选择游戏模式"
+        ohos:text_size="20fp"/>
+
+    <DirectionalLayout
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:top_margin="10fp"
+        ohos:orientation="horizontal"
+        >
+
+        <Button
+            ohos:id="$+id:huarong_btn"
+            ohos:text="华容道"
+            ohos:text_size="20fp"
+            ohos:height="match_content"
+            ohos:width="match_content">
+        </Button>
+
+        <Button
+            ohos:id="$+id:jig_btn"
+            ohos:text="经典拼图"
+            ohos:left_margin="10fp"
+            ohos:text_size="20fp"
+            ohos:height="match_content"
+            ohos:width="match_content">
+        </Button>
+    </DirectionalLayout>
+
+    <DirectionalLayout
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:top_margin="10fp"
+        ohos:orientation="horizontal"
+        >
+
+        <Text
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:layout_alignment="horizontal_center"
+            ohos:text="显示数字："
+            ohos:text_size="20fp"/>
+        <Switch
+            ohos:id="$+id:shownum_switch"
+            ohos:text_state_off="OFF"
+            ohos:text_state_on="ON"
+            ohos:height="20fp"
+            ohos:width="40fp"/>
+
+    </DirectionalLayout>
+
+
+
+</DirectionalLayout>

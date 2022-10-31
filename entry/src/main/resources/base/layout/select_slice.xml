@@ -5,12 +5,7 @@
     ohos:width="match_parent"
     ohos:alignment="center"
     ohos:orientation="vertical">
-    <Text
-        ohos:height="match_content"
-        ohos:width="match_content"
-        ohos:text_size="20fp"
-        ohos:text="Select">
-    </Text>
+
     <Text
         ohos:height="match_content"
         ohos:width="match_content"
@@ -24,49 +19,89 @@
         ohos:width="300vp"
         ohos:layout_alignment="horizontal_center"/>
 
-    <Text
-        ohos:height="match_content"
-        ohos:width="match_content"
-        ohos:text="请选择难度"
-        ohos:text_size="30fp">
-    </Text>
-
-    <RadioContainer
-        ohos:id="$+id:radio_container"
+    <DirectionalLayout
         ohos:height="match_content"
         ohos:width="match_content"
         ohos:orientation="horizontal"
+        ohos:top_margin="10fp"
         ohos:layout_alignment="horizontal_center">
-        <RadioButton
-            ohos:id="$+id:radio_button_easy"
-            ohos:height="40vp"
-            ohos:width="match_content"
-            ohos:text="Easy"
-            ohos:text_size="14fp"/>
-        <RadioButton
-            ohos:id="$+id:radio_button_hard"
-            ohos:height="40vp"
-            ohos:width="match_content"
-            ohos:text="Hard"
-            ohos:text_size="14fp"/>
-    </RadioContainer>
 
-    <Button
+        <Button
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:text="难度选择"
+            ohos:id="$+id:selectDiffBtn"
+            ohos:text_size="20fp">
+        </Button>
+
+        <Text
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:left_margin="10fp"
+            ohos:text="3×3"
+            ohos:text_size="20fp"
+            ohos:id="$+id:diffText">
+        </Text>
+
+
+
+    </DirectionalLayout>
+
+    <DirectionalLayout
         ohos:height="match_content"
         ohos:width="match_content"
-        ohos:text="play"
-        ohos:text_size="40fp"
-        ohos:id="$+id:btn_play">
+        ohos:orientation="horizontal"
+        ohos:top_margin="10fp"
+        ohos:layout_alignment="horizontal_center">
+        <Button
+            ohos:id="$+id:selectModelBtn"
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:text="模式选择"
+            ohos:text_size="20fp">
+        </Button>
 
-    </Button>
+        <Text
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:left_margin="10fp"
+            ohos:text="经典拼图"
+            ohos:text_size="20fp"
+            ohos:id="$+id:modelText">
+        </Text>
 
-    <Button
+    </DirectionalLayout>
+
+    <DirectionalLayout
         ohos:height="match_content"
+        ohos:top_margin="10fp"
         ohos:width="match_content"
-        ohos:text="BACK"
-        ohos:text_size="40fp"
-        ohos:id="$+id:btn_back">
-    </Button>
+        ohos:orientation="horizontal"
+        ohos:layout_alignment="horizontal_center">
+
+        <Button
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:text="返回"
+            ohos:text_size="30fp"
+            ohos:id="$+id:btn_back">
+        </Button>
+
+        <Button
+            ohos:left_margin="10fp"
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:text="开始游戏"
+            ohos:text_size="30fp"
+            ohos:id="$+id:btn_play">
+
+        </Button>
+    </DirectionalLayout>
+
+
+
+
+
 
 
 

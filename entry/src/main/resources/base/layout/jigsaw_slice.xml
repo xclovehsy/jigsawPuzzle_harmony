@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_parent"
+    ohos:width="match_parent"
+    ohos:id="$+id:mainlayout"
+    ohos:alignment="horizontal_center"
+    ohos:background_element="$media:bk2"
+    ohos:orientation="vertical">
+
+    <DirectionalLayout
+        ohos:orientation="horizontal"
+        ohos:alignment="horizontal_center"
+        ohos:height="match_content"
+        ohos:width="match_content">
+        <Text
+            ohos:text="用时:"
+            ohos:height="match_content"
+            ohos:text_size="25fp"
+            ohos:width="match_content">
+
+        </Text>
+        <TickTimer
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:id="$+id:ticktimer"
+            ohos:text_size="25fp">
+        </TickTimer>
+
+        <Text
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:left_margin="15fp"
+            ohos:text_size="25fp"
+            ohos:text="步数:">
+
+        </Text>
+
+        <Text
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:text_size="25fp"
+            ohos:id="$+id:stepCntText"
+            ohos:text="0步">
+
+        </Text>
+
+    </DirectionalLayout>
+
+
+    <TableLayout
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:orientation="vertical"
+        ohos:id="$+id:jigsaw_layout">
+
+    </TableLayout>
+
+    <DirectionalLayout
+        xmlns:ohos="http://schemas.huawei.com/res/ohos"
+        ohos:orientation="horizontal"
+        ohos:height="match_content"
+        ohos:width="match_content">
+
+        <Button
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:id="$+id:btn_tip"
+            ohos:text="提示"
+            ohos:margin="10fp"
+            ohos:text_size="30fp">
+        </Button>
+
+        <Button
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:id="$+id:btn_begin"
+            ohos:text="开始游戏"
+            ohos:margin="10fp"
+            ohos:text_size="30fp">
+        </Button>
+
+
+
+    </DirectionalLayout>
+
+<!--    <Image-->
+<!--        ohos:id="$+id:img_tip"-->
+<!--        ohos:scale_mode="stretch"-->
+<!--        ohos:height="250fp"-->
+<!--        ohos:width="250fp"-->
+<!--        ohos:margin="10fp"-->
+<!--        ohos:image_src="$media:dog">-->
+<!--    </Image>-->
+
+
+
+
+
+</DirectionalLayout>

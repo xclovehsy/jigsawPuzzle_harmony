@@ -436,15 +436,15 @@ public class PlayNineSlice extends AbilitySlice {
         // 设置chip背景图片
         int k = 0;
         chipMap.clear();
-        for(int i = 1; i<= 3; i++){
-            for(int j = 1; j<= 3; j++, k++){
-                // 获取组件
-                Image chipView = findComponentById(chipIds[k]);
-                chipView.setPixelMap(imgIds[k]);
-                // 添加映射关系
-                chipMap.put(chipIds[k], new Chip(i, j, chipView, chipIds[k]));
-            }
-        }
+//        for(int i = 1; i<= 3; i++){
+//            for(int j = 1; j<= 3; j++, k++){
+//                // 获取组件
+//                Image chipView = findComponentById(chipIds[k]);
+//                chipView.setPixelMap(imgIds[k]);
+//                // 添加映射关系
+//                chipMap.put(chipIds[k], new Chip(i, j, chipView, chipIds[k]));
+//            }
+//        }
         HiLog.info(label, "chipMapSize=" + chipMap.size());
 
         // 设置图片不可见

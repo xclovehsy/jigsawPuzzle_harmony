@@ -1,54 +1,205 @@
 package com.example.jigsawpuzzle.slice;
 
-import com.example.jigsawpuzzle.game.Blank;
 import com.example.jigsawpuzzle.ResourceTable;
 import com.example.jigsawpuzzle.game.Block;
-import com.example.jigsawpuzzle.game.Chip;
 import com.example.jigsawpuzzle.game.MyImage;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
 import ohos.agp.components.*;
-import ohos.agp.utils.Point;
+import ohos.agp.render.Canvas;
+import ohos.agp.render.Paint;
+import ohos.agp.render.Texture;
+import ohos.agp.utils.Color;
 import ohos.agp.window.dialog.CommonDialog;
 import ohos.agp.window.dialog.IDialog;
+import ohos.global.resource.NotExistException;
 import ohos.hiviewdfx.HiLog;
 import ohos.hiviewdfx.HiLogLabel;
-import ohos.multimodalinput.event.TouchEvent;
+import ohos.media.image.ImageSource;
+import ohos.media.image.PixelMap;
+import ohos.media.image.common.ImageInfo;
+import ohos.media.image.common.Rect;
+import ohos.media.image.common.Size;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 
 
 public class HuarongRoadNine extends AbilitySlice {
     static final HiLogLabel label = new HiLogLabel(HiLog.LOG_APP, 0, "MY_TAG");
     private Image img_tip;
-    private int[] imgIds = {ResourceTable.Media_doraemon911, ResourceTable.Media_doraemon912, ResourceTable.Media_doraemon913, ResourceTable.Media_doraemon921, ResourceTable.Media_doraemon922, ResourceTable.Media_doraemon923, ResourceTable.Media_doraemon931, ResourceTable.Media_doraemon932, ResourceTable.Media_doraemon933};
-    private int[] blockIds = {ResourceTable.Id_blank11, ResourceTable.Id_blank12, ResourceTable.Id_blank13, ResourceTable.Id_blank21, ResourceTable.Id_blank22, ResourceTable.Id_blank23, ResourceTable.Id_blank31, ResourceTable.Id_blank32, ResourceTable.Id_blank33};
-    private int tipId = ResourceTable.Media_doraemon;
-    private Map<Integer, Block> BlockMap = new HashMap<>();
-    private int BlockCnt = 9;
-    private List<MyImage> myimageList = new ArrayList<>();
-    //    private List<Image> blockList = new LinkedList<>();
+    private List<Image> blockList = new LinkedList<>();
+    private Map<Image, Block> BlockMap = new HashMap<>();
+    private int jigsawCnt = 0;
+    private List<MyImage> imageList = new ArrayList<>();
     private Button btn_begin, btn_end;
-    private String jigsawName = "doraemon";
+    private int jigsawId = ResourceTable.Media_dog;
+    private TableLayout jigsawLayout = null;
+    private PixelMap jigsawPixelMap = null;
     private TickTimer tickTimer;
+    private int jigsawRowCnt = 5;
     long startTime = 0, passTime = 0;
+    private int pm_px;  // 手机设备的宽
+    private int pg_px;  // 手机设备的高
+    private Text stepCntText;
+    private int stepCnt = 0;
+    private boolean isShowNum = true; //是否显示数字
 
     @Override
     public void onStart(Intent intent) {
         super.onStart(intent);
-        super.setUIContent(ResourceTable.Layout_huarongnine_slice);
-//        jigsawName = intent.getStringParam("jigsawName");
 
+        this.jigsawId = intent.getIntParam("jigsawId", ResourceTable.Media_dog);
+        this.jigsawRowCnt = intent.getIntParam("diff", 3);
+        this.isShowNum = intent.getBooleanParam("isShowNum", true);
+        this.jigsawCnt = (int) Math.pow(this.jigsawRowCnt, 2);
+        HiLog.info(label, "jigsawCnt="+jigsawCnt);
 
-        // 初始化组件
-        initComponent();
+        pm_px=AttrHelper.vp2px(getContext().getResourceManager().getDeviceCapability().width,this);
+        pg_px=AttrHelper.vp2px(getContext().getResourceManager().getDeviceCapability().height,this);
 
-//         设置chip图片
+        // 获取拼图图片资源
+        this.jigsawPixelMap = getPixelMap(jigsawId);
+
+        // 拼图切割
+        this.imageList = getCutPixelMap(this.jigsawPixelMap);
+
+        // 初始化布局
+        initLayout();
+
+        // 设置chip图片
         setChip();
 
-//         添加响应事件
+        // 添加响应事件
         addListener();
+    }
 
+    /**
+     * 设置步数text
+     */
+    private void setStepCntText(){
+        String str = this.stepCnt + "步";
+        stepCntText.setText(str);
+    }
+
+    /**
+     * 初始化布局函数
+     */
+    private void initLayout(){
+        int textSize = (int)(this.pm_px*0.05);
+        int textMargin = (int)(pm_px*0.1);
+        int tipSize = (int)(this.pm_px*0.5);
+        int tableLayoutWidth = (int)(pm_px*0.7);
+        int blockWidth = (int)(tableLayoutWidth/this.jigsawRowCnt);
+        int blockMargin = (int) (blockWidth*0.01);
+
+        // 设置主布局
+        DirectionalLayout mainLayout = new DirectionalLayout(this);
+        mainLayout.setOrientation(Component.VERTICAL);
+        mainLayout.setWidth(ComponentContainer.LayoutConfig.MATCH_PARENT);
+        mainLayout.setHeight(ComponentContainer.LayoutConfig.MATCH_PARENT);
+        mainLayout.setAlignment(1);
+
+        // 头部信息布局
+        DirectionalLayout headLayout = new DirectionalLayout(this);
+        headLayout.setOrientation(Component.HORIZONTAL);
+        headLayout.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        headLayout.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        headLayout.setAlignment(1);
+
+        // 头部信息
+        Text timeText = new Text(this), stepText = new Text(this);
+        this.stepCntText = new Text(this);
+        timeText.setText("用时："); stepText.setText("步数："); stepCntText.setText("10 步");
+        timeText.setTextSize(textSize); stepText.setTextSize(textSize); stepCntText.setTextSize(textSize);
+
+        timeText.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        timeText.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        stepText.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        stepText.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        stepCntText.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        stepCntText.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        stepText.setMarginLeft(textMargin);
+
+        // 添加计时器
+        this.tickTimer = new TickTimer(this);
+        tickTimer.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        tickTimer.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+//        tickTimer.setVisibility(Component.INVISIBLE);
+        tickTimer.setFormat("mm:ss:SSSS");
+        tickTimer.setCountDown(false);
+        tickTimer.setTextSize(textSize);
+
+        headLayout.addComponent(timeText);headLayout.addComponent(tickTimer);
+        headLayout.addComponent(stepText);headLayout.addComponent(stepCntText);
+        mainLayout.addComponent(headLayout);
+        stepCnt = 0;
+        setStepCntText();
+
+        // 添加拼图布局
+        this.jigsawLayout = new TableLayout(this);
+        this.jigsawLayout.setColumnCount(this.jigsawRowCnt);
+        this.jigsawLayout.setRowCount(this.jigsawRowCnt);
+        this.jigsawLayout.setOrientation(Component.HORIZONTAL);
+        this.jigsawLayout.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        this.jigsawLayout.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+
+        // 向tableLayout中添加Image
+        this.blockList = new LinkedList<>();
+        for(int i = 0; i<this.jigsawRowCnt; i++){
+            for(int j = 0; j<this.jigsawRowCnt; j++){
+                Image block = new Image(this);
+                block.setWidth(blockWidth);
+                block.setHeight(blockWidth);
+                block.setScaleMode(Image.ScaleMode.STRETCH);
+                block.setMarginBottom(blockMargin);
+                block.setMarginLeft(blockMargin);
+                block.setMarginRight(blockMargin);
+                block.setMarginTop(blockMargin);
+//                block.setPixelMap(this.jigsawPixelMap);
+                this.jigsawLayout.addComponent(block);
+                this.blockList.add(block);
+            }
+        }
+        mainLayout.addComponent(this.jigsawLayout);
+
+        // 开始结束按钮布局
+        DirectionalLayout buttonLayout = new DirectionalLayout(this);
+        buttonLayout.setOrientation(Component.HORIZONTAL);
+        buttonLayout.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        buttonLayout.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        buttonLayout.setAlignment(1);
+
+        this.btn_begin = new Button(this);
+        btn_begin.setText("开始游戏");
+        btn_begin.setTextSize(textSize);
+        btn_begin.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        btn_begin.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+
+        this.btn_end = new Button(this);
+        btn_end.setText("结束");
+        btn_end.setTextSize(textSize);
+        btn_end.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        btn_end.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
+        btn_end.setMarginLeft(textMargin);
+        buttonLayout.addComponent(btn_begin);
+        buttonLayout.addComponent(btn_end);
+        mainLayout.addComponent(buttonLayout);
+        btn_end.setClickable(false);
+
+        this.img_tip = new Image(this);
+        img_tip.setWidth(tipSize);
+        img_tip.setHeight(tipSize);
+        img_tip.setScaleMode(Image.ScaleMode.STRETCH);
+        img_tip.setPixelMap(this.jigsawPixelMap);
+        mainLayout.addComponent(img_tip);
+
+        passTime = 0;
+        startTime = System.currentTimeMillis();
+        tickTimer.setBaseTime(startTime - passTime);
+
+        super.setUIContent(mainLayout);
     }
 
     /**
@@ -60,30 +211,14 @@ public class HuarongRoadNine extends AbilitySlice {
             @Override
             public void onClick(Component component) {
                 // 设置时钟
-                passTime = 0;
-                startTime = System.currentTimeMillis();
-                tickTimer.setBaseTime(startTime - passTime);
-                tickTimer.start();
-                tickTimer.setVisibility(Component.VISIBLE);
+                TimerBegin();
+                // 开始游戏
+                GameBegin();
 
-                // 设置可滑动
-                for (Block block : BlockMap.values()) {
-                    block.getView().setClickable(true);
-                }
+                btn_end.setClickable(true);
+                btn_begin.setClickable(false);
             }
         });
-
-        for (Block block : BlockMap.values()) {
-            block.getView().setClickedListener(new Component.ClickedListener() {
-                @Override
-                public void onClick(Component component) {
-                    Block myBlock = BlockMap.get(component.getId());
-
-                    blockSwap(myBlock);
-
-                }
-            });
-        }
 
         btn_end.setClickedListener(new Component.ClickedListener() {
             @Override
@@ -92,83 +227,97 @@ public class HuarongRoadNine extends AbilitySlice {
             }
         });
 
+    }
 
-//        // 为chip添加响应事件
-//        for (Chip chip: chipMap.values()){
-//            chip.getImage().setDraggedListener(Component.DRAG_HORIZONTAL_VERTICAL, new Component.DraggedListener(){
-//                private Point point;
-//                //拖拽位置
-//                private Point componentPo;
-//                @Override
-//                public void onDragDown(Component component, DragInfo dragInfo) {
-//
-//                }
-//
-//                @Override
-//                public void onDragStart(Component component, DragInfo dragInfo) {
-//                    point = dragInfo.startPoint;
-//                    //获取组件在父组件中的起始位置
-//                    componentPo = new Point(component.getContentPositionX(), component.getContentPositionY());
-//
-//                    HiLog.info(label, "up");
-//                    Chip curChip = chipMap.get(component.getId());
-//                    HiLog.info(label, "chipRightX="+curChip.getRightX() + ", chipRightY="+ curChip.getRightY());
-//                    if (curChip.isInSpace()) {
-////                            Log.d(TAG, "onTouch->"+chip.getCurX()+" "+chip.getCurY());
-//                        for (Blank blank : BlankList) {
-//                            if (blank.getX() == curChip.getCurX() && blank.getY() == curChip.getCurY()) {
-//                                blank.setOccupy(false);
-//                                break;
-//                            }
-//                        }
-//                        curChip.outOfSpace();
-//                    }
-//                }
-//
-//                @Override
-//                public void onDragUpdate(Component component, DragInfo dragInfo) {
-//                    //计算每一次更新时的偏移量。draginfo中的偏移量是相对于上一次拖拽时的偏移量，在方向发	生冲突时，会产生位置动态刷新问题
-//                    float xOffset = dragInfo.updatePoint.getPointX() - point.getPointX();
-//                    float yOffset = dragInfo.updatePoint.getPointY() - point.getPointY();
-//                    //setContentPosition为组件在父组件中的位置
-//                    component.setContentPosition(componentPo.getPointX() + xOffset, componentPo.getPointY() + yOffset);
-//                    componentPo = new Point(component.getContentPositionX(), component.getContentPositionY());
-//                }
-//
-//                @Override
-//                public void onDragEnd(Component component, DragInfo dragInfo) {
-//                    HiLog.info(label, "down x=" + component.getContentPositionX() + " y="+ component.getContentPositionY());
-//                    Chip curChip = chipMap.get(component.getId());
-//                    for(Blank blank: BlankList){
-//                        if(inPosition(component, blank.getImage()) && !blank.isOccupy()){
-//                            component.setContentPositionX(blank.getImage().getContentPositionX());
-//                            component.setContentPositionY(blank.getImage().getContentPositionY());
-//
-//                            // 设置当前chip的所在位置
-//                            curChip.setCurX(blank.getX());
-//                            curChip.setCurY(blank.getY());
-//
-//                            blank.setOccupy(true);
-//                            HiLog.info(label, "ChipId="+component.getId() + ", X=" + blank.getX() + ", Y=" + blank.getY());
-//
-//                            // 判断是否完成拼图
-//                            isBINGO();
-//
-//                        }
-//                    }
-//                }
-//
-//                @Override
-//                public void onDragCancel(Component component, DragInfo dragInfo) {
-//
-//                }
-//            });
-//        }
-
+    private void TimerBegin(){
+        // 设置时钟
+        passTime = 0;
+        startTime = System.currentTimeMillis();
+        tickTimer.setBaseTime(startTime - passTime);
+        tickTimer.start();
+        tickTimer.setVisibility(Component.VISIBLE);
     }
 
     /**
-     *
+     * 切割图片功能
+     * @param pixelMap
+     * @return
+     */
+    private List<PixelMap> cutPic(PixelMap pixelMap){
+        ImageInfo imageInfo = pixelMap.getImageInfo();
+        int height = imageInfo.size.height;
+        int width = imageInfo.size.width;
+        int size = Math.min(height, width);
+
+
+        PixelMap.InitializationOptions options = new PixelMap.InitializationOptions();
+        options.pixelFormat = imageInfo.pixelFormat;
+        options.editable = true;
+        options.size = new Size();
+        options.size.width = size;
+        options.size.height = size;
+        Rect rect = new Rect();
+        rect.minX = 0;
+        rect.minY = 0;
+        rect.width = size;
+        rect.height = size;
+        PixelMap pixelMap1 = PixelMap.create(pixelMap, rect, options);
+
+        List<PixelMap> pixelMapList = new LinkedList<>();
+        int t = 0;
+        int pieceSize = (int)Math.floor(size / (float)this.jigsawRowCnt);
+        for(int i = 0; i<this.jigsawRowCnt; i++){
+            for(int j = 0; j<this.jigsawRowCnt; j++){
+                int x = j*pieceSize;
+                int y = i*pieceSize;
+                Rect rect1 = new Rect();
+                rect1.height = pieceSize;
+                rect1.width = pieceSize;
+                rect1.minX = x;
+                rect1.minY = y;
+                PixelMap temp = PixelMap.create(pixelMap1, rect1, options);
+
+                if(this.isShowNum){
+                    Canvas canvas = new Canvas(new Texture((temp)));
+                    Paint paint = new Paint();
+                    paint.setTextSize(pieceSize*2);
+                    paint.setColor(Color.RED);
+                    t++;
+                    canvas.drawText(paint, ""+t, pieceSize, pieceSize*2);
+                }
+
+                pixelMapList.add(temp);
+            }
+        }
+
+        HiLog.info(label, "temp="+pixelMapList.size());
+        return pixelMapList;
+    }
+
+    /**
+     * 获取图片pixelmap资源
+     * @param imageId
+     * @return
+     */
+    PixelMap getPixelMap(int imageId)
+    {
+        ImageSource imageSource=null;
+        InputStream inputStream=null;
+        try {
+            inputStream = getContext().getResourceManager().getResource(imageId);
+            imageSource = ImageSource.create(inputStream, null);
+            inputStream.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (NotExistException e) {
+            e.printStackTrace();
+        }
+        PixelMap pix= imageSource.createPixelmap(null);
+        return pix;
+    }
+
+    /**
+     * 交换block
      */
     private void blockSwap(Block block) {
         int x = block.getX();
@@ -177,7 +326,6 @@ public class HuarongRoadNine extends AbilitySlice {
         for (Block block1 : BlockMap.values()) {
             int tx = block1.getX(), ty = block1.getY();
             if (Math.abs(tx + ty - x - y) == 1 && block1.isBlank()) {
-                // 交换两个图片的image
                 MyImage timg = block.getImage();
                 block.setImage(block1.getImage());
                 block1.setImage(timg);
@@ -185,8 +333,13 @@ public class HuarongRoadNine extends AbilitySlice {
                 block.setBlank(true);
                 block1.setBlank(false);
 
-                block.RenewImage();
+                // 设置
+                block.getView().setVisibility(Component.INVISIBLE);
+                block1.getView().setVisibility(Component.VISIBLE);
                 block1.RenewImage();
+
+                this.stepCnt += 1;
+                setStepCntText();
             }
         }
     }
@@ -195,11 +348,14 @@ public class HuarongRoadNine extends AbilitySlice {
      * 重新挑战游戏
      */
     private void rePlay() {
-
         tickTimer.setVisibility(Component.INVISIBLE);
-
         // 重新设置chip的图片
         setChip();
+        btn_begin.setClickable(true);
+        btn_end.setClickable(false);
+
+        this.stepCnt = 0;
+        this.setStepCntText();
     }
 
 
@@ -211,9 +367,18 @@ public class HuarongRoadNine extends AbilitySlice {
     private int getBINGOChipCnt() {
         int cnt = 0;
         for (Block block : BlockMap.values()) {
+            HiLog.info(label, "test: x=" + block.getX()+ ", y="+block.getY() + ", rx="+block.getImage().getRightX() + ", ry=" + block.getImage().getRightY());
             if (block.isRightPosition()) cnt++;
         }
         return cnt;
+    }
+
+    // 时钟停止
+    private void TimerEnd(){
+        // 停止计时器
+        passTime = System.currentTimeMillis() - startTime + passTime;
+        tickTimer.setBaseTime(System.currentTimeMillis() - passTime);
+        tickTimer.stop();
     }
 
 
@@ -233,11 +398,8 @@ public class HuarongRoadNine extends AbilitySlice {
     private boolean isBINGO() {
         HiLog.info(label, "bingoCnt=" + getBINGOChipCnt());
 
-        if (getBINGOChipCnt() == BlockCnt) {
-            // 停止计时器
-            passTime = System.currentTimeMillis() - startTime + passTime;
-            tickTimer.setBaseTime(System.currentTimeMillis() - passTime);
-            tickTimer.stop();
+        if (getBINGOChipCnt() == jigsawCnt) {
+            TimerEnd();
 
             // 创建弹窗
             CommonDialog cd = new CommonDialog(this);
@@ -258,6 +420,8 @@ public class HuarongRoadNine extends AbilitySlice {
                 public void onClick(IDialog iDialog, int i) {
                     rePlay();
                     cd.destroy();
+                    btn_end.setClickable(false);
+                    btn_begin.setClickable(true);
                 }
             });
             cd.setButton(2, "确定", new IDialog.ClickedListener() {
@@ -301,160 +465,68 @@ public class HuarongRoadNine extends AbilitySlice {
     }
 
     /**
-     * 初始化组件
+     * 获取切割拼图
+     * @param pixelMap
+     * @return
      */
-    void initComponent() {
-        HiLog.info(label, "nineSlice_jigsawName=" + jigsawName);
-
-        if (jigsawName.equals("dog")) {
-            imgIds[0] = ResourceTable.Media_dog911;
-            imgIds[1] = ResourceTable.Media_dog912;
-            imgIds[2] = ResourceTable.Media_dog913;
-            imgIds[3] = ResourceTable.Media_dog921;
-            imgIds[4] = ResourceTable.Media_dog922;
-            imgIds[5] = ResourceTable.Media_dog923;
-            imgIds[6] = ResourceTable.Media_dog931;
-            imgIds[7] = ResourceTable.Media_dog932;
-            imgIds[8] = ResourceTable.Media_dog933;
-            tipId = ResourceTable.Media_dog;
-        } else if (jigsawName.equals("ultraman")) {
-            imgIds[0] = ResourceTable.Media_ultraman911;
-            imgIds[1] = ResourceTable.Media_ultraman912;
-            imgIds[2] = ResourceTable.Media_ultraman913;
-            imgIds[3] = ResourceTable.Media_ultraman921;
-            imgIds[4] = ResourceTable.Media_ultraman922;
-            imgIds[5] = ResourceTable.Media_ultraman923;
-            imgIds[6] = ResourceTable.Media_ultraman931;
-            imgIds[7] = ResourceTable.Media_ultraman932;
-            imgIds[8] = ResourceTable.Media_ultraman933;
-            tipId = ResourceTable.Media_ultraman;
-        } else if (jigsawName.equals("doraemon")) {
-            imgIds[0] = ResourceTable.Media_doraemon911;
-            imgIds[1] = ResourceTable.Media_doraemon912;
-            imgIds[2] = ResourceTable.Media_doraemon913;
-            imgIds[3] = ResourceTable.Media_doraemon921;
-            imgIds[4] = ResourceTable.Media_doraemon922;
-            imgIds[5] = ResourceTable.Media_doraemon923;
-            imgIds[6] = ResourceTable.Media_doraemon931;
-            imgIds[7] = ResourceTable.Media_doraemon932;
-            imgIds[8] = ResourceTable.Media_doraemon933;
-            tipId = ResourceTable.Media_doraemon;
-        } else if (jigsawName.equals("hellokitty")) {
-            imgIds[0] = ResourceTable.Media_hellokitty911;
-            imgIds[1] = ResourceTable.Media_hellokitty912;
-            imgIds[2] = ResourceTable.Media_hellokitty913;
-            imgIds[3] = ResourceTable.Media_hellokitty921;
-            imgIds[4] = ResourceTable.Media_hellokitty922;
-            imgIds[5] = ResourceTable.Media_hellokitty923;
-            imgIds[6] = ResourceTable.Media_hellokitty931;
-            imgIds[7] = ResourceTable.Media_hellokitty932;
-            imgIds[8] = ResourceTable.Media_hellokitty933;
-            tipId = ResourceTable.Media_hellokitty;
-
-        } else if (jigsawName.equals("mickey")) {
-            imgIds[0] = ResourceTable.Media_mickey911;
-            imgIds[1] = ResourceTable.Media_mickey912;
-            imgIds[2] = ResourceTable.Media_mickey913;
-            imgIds[3] = ResourceTable.Media_mickey921;
-            imgIds[4] = ResourceTable.Media_mickey922;
-            imgIds[5] = ResourceTable.Media_mickey923;
-            imgIds[6] = ResourceTable.Media_mickey931;
-            imgIds[7] = ResourceTable.Media_mickey932;
-            imgIds[8] = ResourceTable.Media_mickey933;
-            tipId = ResourceTable.Media_mickey;
-
-        } else if (jigsawName.equals("minion")) {
-            imgIds[0] = ResourceTable.Media_minion911;
-            imgIds[1] = ResourceTable.Media_minion912;
-            imgIds[2] = ResourceTable.Media_minion913;
-            imgIds[3] = ResourceTable.Media_minion921;
-            imgIds[4] = ResourceTable.Media_minion922;
-            imgIds[5] = ResourceTable.Media_minion923;
-            imgIds[6] = ResourceTable.Media_minion931;
-            imgIds[7] = ResourceTable.Media_minion932;
-            imgIds[8] = ResourceTable.Media_minion933;
-            tipId = ResourceTable.Media_minion;
-
-        } else if (jigsawName.equals("snoopy")) {
-            imgIds[0] = ResourceTable.Media_snoopy911;
-            imgIds[1] = ResourceTable.Media_snoopy912;
-            imgIds[2] = ResourceTable.Media_snoopy913;
-            imgIds[3] = ResourceTable.Media_snoopy921;
-            imgIds[4] = ResourceTable.Media_snoopy922;
-            imgIds[5] = ResourceTable.Media_snoopy923;
-            imgIds[6] = ResourceTable.Media_snoopy931;
-            imgIds[7] = ResourceTable.Media_snoopy932;
-            imgIds[8] = ResourceTable.Media_snoopy933;
-            tipId = ResourceTable.Media_snoopy;
-
-        } else if (jigsawName.equals("snow")) {
-            imgIds[0] = ResourceTable.Media_snow911;
-            imgIds[1] = ResourceTable.Media_snow912;
-            imgIds[2] = ResourceTable.Media_snow913;
-            imgIds[3] = ResourceTable.Media_snow921;
-            imgIds[4] = ResourceTable.Media_snow922;
-            imgIds[5] = ResourceTable.Media_snow923;
-            imgIds[6] = ResourceTable.Media_snow931;
-            imgIds[7] = ResourceTable.Media_snow932;
-            imgIds[8] = ResourceTable.Media_snow933;
-            tipId = ResourceTable.Media_snow;
-
-        } else if (jigsawName.equals("spongebob")) {
-            imgIds[0] = ResourceTable.Media_spongebob911;
-            imgIds[1] = ResourceTable.Media_spongebob912;
-            imgIds[2] = ResourceTable.Media_spongebob913;
-            imgIds[3] = ResourceTable.Media_spongebob921;
-            imgIds[4] = ResourceTable.Media_spongebob922;
-            imgIds[5] = ResourceTable.Media_spongebob923;
-            imgIds[6] = ResourceTable.Media_spongebob931;
-            imgIds[7] = ResourceTable.Media_spongebob932;
-            imgIds[8] = ResourceTable.Media_spongebob933;
-            tipId = ResourceTable.Media_spongebob;
-
-        } else if (jigsawName.equals("winnie")) {
-            imgIds[0] = ResourceTable.Media_winnie911;
-            imgIds[1] = ResourceTable.Media_winnie912;
-            imgIds[2] = ResourceTable.Media_winnie913;
-            imgIds[3] = ResourceTable.Media_winnie921;
-            imgIds[4] = ResourceTable.Media_winnie922;
-            imgIds[5] = ResourceTable.Media_winnie923;
-            imgIds[6] = ResourceTable.Media_winnie931;
-            imgIds[7] = ResourceTable.Media_winnie932;
-            imgIds[8] = ResourceTable.Media_winnie933;
-            tipId = ResourceTable.Media_winnie;
-
-        } else {
-            imgIds[0] = ResourceTable.Media_doraemon911;
-            imgIds[1] = ResourceTable.Media_doraemon912;
-            imgIds[2] = ResourceTable.Media_doraemon913;
-            imgIds[3] = ResourceTable.Media_doraemon921;
-            imgIds[4] = ResourceTable.Media_doraemon922;
-            imgIds[5] = ResourceTable.Media_doraemon923;
-            imgIds[6] = ResourceTable.Media_doraemon931;
-            imgIds[7] = ResourceTable.Media_doraemon932;
-            imgIds[8] = ResourceTable.Media_doraemon933;
-            tipId = ResourceTable.Media_doraemon;
-        }
-
-        btn_begin = findComponentById(ResourceTable.Id_btn_begin);
-        btn_end = findComponentById(ResourceTable.Id_btn_end);
-        img_tip = findComponentById(ResourceTable.Id_img_tip);
-
-        // 初始化定时器
-        tickTimer = findComponentById(ResourceTable.Id_ticktimer);
-        tickTimer.setCountDown(false);
-        tickTimer.setFormat("mm:ss:SSSS");
-        tickTimer.setVisibility(Component.INVISIBLE);
-
-        myimageList.clear();
+    List<MyImage> getCutPixelMap(PixelMap pixelMap){
+        List<PixelMap> pixelMapList = cutPic(pixelMap);
+        List<MyImage> tempPixelMapList = new LinkedList<>();
         int k = 0;
-        for (int i = 1; i <= 3; i++) {
-            for (int j = 1; j <= 3; j++, k++) {
-                if (k == BlockCnt - 1) {
+        for (int i = 1; i <= this.jigsawRowCnt; i++) {
+            for (int j = 1; j <= this.jigsawRowCnt; j++, k++) {
+                if (k == jigsawCnt - 1) {
                     break;
                 }
-                myimageList.add(new MyImage(i, j, imgIds[k]));
+                tempPixelMapList.add(new MyImage(i, j, pixelMapList.get(k)));
             }
+        }
+        HiLog.info(label, "tempPixelMapListSize="+tempPixelMapList.size());
+        return tempPixelMapList;
+    }
+
+    /**
+     * 开始游戏
+     */
+    void GameBegin(){
+        List<MyImage> temp = new LinkedList<>(this.imageList);
+
+        // 打乱
+        Collections.shuffle(temp);
+
+        // 设置chip背景图片
+        int k = 0;
+        BlockMap.clear();
+        for (int i = 1; i <= this.jigsawRowCnt; i++) {
+            for (int j = 1; j <= this.jigsawRowCnt; j++, k++) {
+                if (k == jigsawCnt - 1) {
+                    break;
+                }
+                // 获取组件
+                Image blockView = this.blockList.get(k);
+                blockView.setPixelMap(temp.get(k).getPixelMap());
+                blockView.setVisibility(Component.VISIBLE);
+                // 添加映射关系
+                BlockMap.put(this.blockList.get(k), new Block(i, j, temp.get(k), blockView, false));
+            }
+        }
+
+//        添加最后一个空白
+        Image blockView = this.blockList.get(jigsawCnt - 1);
+        // 设置最后一个不可见
+        blockView.setVisibility(Component.INVISIBLE);
+        // 添加映射关系
+        BlockMap.put(this.blockList.get(jigsawCnt -1), new Block(this.jigsawRowCnt, this.jigsawRowCnt, new MyImage(this.jigsawRowCnt, this.jigsawRowCnt, null), blockView, true));
+
+        // 添加响应事件
+        for(Block block:BlockMap.values()){
+            block.getView().setClickedListener(new Component.ClickedListener() {
+                @Override
+                public void onClick(Component component) {
+                    Block myBlock = BlockMap.get((Image) component);
+                    blockSwap(myBlock);
+                }
+            });
         }
     }
 
@@ -462,41 +534,25 @@ public class HuarongRoadNine extends AbilitySlice {
      * 初始化Chip图片并设置映射关系
      */
     void setChip() {
-        // 设置单参考图片==============
-        img_tip.setImageAndDecodeBounds(tipId);
-
-        // 打乱
-//        Collections.shuffle(myimageList);
-
         // 设置chip背景图片
-
-
         int k = 0;
-        BlockMap.clear();
-        for (int i = 1; i <= 3; i++) {
-            for (int j = 1; j <= 3; j++, k++) {
-                if (k == BlockCnt - 1) {
+        for (int i = 1; i <= this.jigsawRowCnt; i++) {
+            for (int j = 1; j <= this.jigsawRowCnt; j++, k++) {
+                if (k == jigsawCnt - 1) {
                     break;
                 }
                 // 获取组件
-                Image blockView = findComponentById(blockIds[k]);
-                blockView.setPixelMap(myimageList.get(k).getImageId());
-                // 添加映射关系
-                BlockMap.put(blockIds[k], new Block(i, j, myimageList.get(k), blockView, false));
+                Image blockView = this.blockList.get(k);
+                blockView.setPixelMap(this.imageList.get(k).getPixelMap());
+                blockView.setVisibility(Component.VISIBLE);
+                blockView.setClickedListener(null);
             }
         }
-
 //        添加最后一个空白
-        Image blockView = findComponentById(blockIds[BlockCnt - 1]);
-        blockView.setPixelMap(ResourceTable.Media_question);
-        // 添加映射关系
-        BlockMap.put(blockIds[BlockCnt - 1], new Block(3, 3, new MyImage(3, 3, ResourceTable.Media_question), blockView, true));
-
-
-        // 设置图片不可点
-        for (Block block : BlockMap.values()) {
-            block.getView().setClickable(false);
-        }
+        Image blockView = this.blockList.get(jigsawCnt -1);
+        // 设置最后一个不可见
+        blockView.setVisibility(Component.INVISIBLE);
+        blockView.setClickedListener(null);
     }
 
     @Override
@@ -508,6 +564,4 @@ public class HuarongRoadNine extends AbilitySlice {
     public void onForeground(Intent intent) {
         super.onForeground(intent);
     }
-
 }
-

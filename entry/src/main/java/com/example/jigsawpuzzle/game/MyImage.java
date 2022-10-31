@@ -1,23 +1,31 @@
 package com.example.jigsawpuzzle.game;
 
+import ohos.media.image.PixelMap;
+
 public class MyImage {
     private int rightY, rightX;
-    private int imageId;
+    private PixelMap pixelMap;
 
     public MyImage() {
     }
 
-    public MyImage(int rightX, int rightY, int imageId) {
+    public MyImage(int rightX, int rightY, PixelMap pixelMap) {
         this.rightY = rightY;
         this.rightX = rightX;
-        this.imageId = imageId;
+        this.pixelMap = pixelMap;
     }
 
     public int getRightY() {
         return rightY;
     }
 
+    public PixelMap getPixelMap() {
+        return pixelMap;
+    }
 
+    public void setPixelMap(PixelMap pixelMap) {
+        this.pixelMap = pixelMap;
+    }
 
     public void setRightY(int rightY) {
         this.rightY = rightY;
@@ -31,11 +39,4 @@ public class MyImage {
         this.rightX = rightX;
     }
 
-    public int getImageId() {
-        return imageId;
-    }
-
-    public void setImageId(int imageId) {
-        this.imageId = imageId;
-    }
 }

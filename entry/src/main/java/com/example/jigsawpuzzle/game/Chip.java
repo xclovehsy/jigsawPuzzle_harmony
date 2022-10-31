@@ -8,13 +8,11 @@ public class Chip {
     private int curX;
     private int curY;
     private Image image;
-    private int id;
 
-    public Chip(int rightX, int rightY, Image image, int id) {
+    public Chip(int rightX, int rightY, Image image) {
         this.rightX = rightX;
         this.rightY = rightY;
         this.image = image;
-        this.id = id;
         this.curX = -1;
         this.curY = -1;
     }
@@ -73,13 +71,5 @@ public class Chip {
 
     public void setImage(Image image) {
         this.image = image;
-    }
-
-    public int getId() {
-        return id;
-    }
-
-    public void setId(int id) {
-        this.id = id;
     }
 }

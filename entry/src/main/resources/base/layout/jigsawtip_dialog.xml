@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_content"
+    ohos:width="match_parent"
+    ohos:alignment="horizontal_center"
+    ohos:orientation="vertical">
+    <Text
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:text_size="20fp"
+        ohos:text="拼图提示">
+    </Text>
+
+    <Image
+        ohos:height="match_content"
+        ohos:id="$+id:tip_image"
+        ohos:scale_mode="stretch"
+        ohos:width="match_parent">
+
+    </Image>
+    <Button
+        ohos:height="match_content"
+        ohos:id="$+id:ok_btn"
+        ohos:width="match_content"
+        ohos:text_size="20fp"
+        ohos:text="确定"
+        >
+
+    </Button>
+
+</DirectionalLayout>

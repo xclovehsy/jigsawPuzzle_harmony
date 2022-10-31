@@ -34,7 +34,7 @@ public class Block {
 
 
     public void RenewImage(){
-        this.view.setImageAndDecodeBounds(this.image.getImageId());
+        this.view.setPixelMap(this.image.getPixelMap());
     }
 
     public void setBlank(boolean blank) {
