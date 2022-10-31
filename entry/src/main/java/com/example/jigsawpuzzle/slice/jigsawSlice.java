@@ -28,6 +28,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import static ohos.agp.components.ComponentContainer.LayoutConfig.MATCH_CONTENT;
+
 
 public class jigsawSlice extends AbilitySlice {
     static final HiLogLabel label = new HiLogLabel(HiLog.LOG_APP,0,"MY_TAG");
@@ -40,7 +42,7 @@ public class jigsawSlice extends AbilitySlice {
 
     private List<Image> imageList = new LinkedList<>();
     private float maxChipX = 0, minChipX=0, maxChipY=0, minChipY=0;
-    private Button btn_begin, btn_tip;
+    private Button btn_begin, btn_tip, btn_giveup;
     private String jigsawName = "dog";
     private TickTimer tickTimer;
     long startTime = 0, passTime = 0;
@@ -58,6 +60,7 @@ public class jigsawSlice extends AbilitySlice {
     private TableLayout blocklayout = null;
     private List<PixelMap> pixelMapList = null;
     private int chipWidth = 0;
+    private DirectionalLayout mainlayout = null;
 
     @Override
     public void onStart(Intent intent) {
@@ -182,14 +185,35 @@ public class jigsawSlice extends AbilitySlice {
      * 添加响应事件函数
      */
     private void addListener() {
-        btn_tip.setTouchEventListener(new Component.TouchEventListener() {
+
+        btn_giveup.setClickedListener(new Component.ClickedListener() {
             @Override
-            public boolean onTouchEvent(Component component, TouchEvent touchEvent) {
-//                CommonDialog cd = new CommonDialog(getContext());
-//                cd.setCornerRadius(15);
-//                DirectionalLayout dl = (DirectionalLayout) LayoutScatter.getInstance(getContext()).parse(ResourceTable.Layout_diff_dialog, null, false);
-//                diffPicker = dl.findComponentById(ResourceTable.Id_diff_picker);
-                return false;
+            public void onClick(Component component) {
+                clearChipCom();
+                AbilitySlice slice = new SelectSlice();
+                Intent intent = new Intent();
+                present(slice, intent);
+            }
+        });
+        btn_tip.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                CommonDialog cd = new CommonDialog(getContext());
+                cd.setCornerRadius(50);
+                DirectionalLayout dl = (DirectionalLayout) LayoutScatter.getInstance(getContext()).parse(ResourceTable.Layout_jigsawtip_dialog, null, false);
+                Button ok_btn = dl.findComponentById(ResourceTable.Id_ok_btn);
+                ok_btn.setClickedListener(new Component.ClickedListener() {
+                    @Override
+                    public void onClick(Component component) {
+                        cd.destroy();
+                    }
+                });
+                Image tip_img = dl.findComponentById(ResourceTable.Id_tip_image);
+                tip_img.setPixelMap(jigsawPixelMap);
+
+                cd.setSize(800, MATCH_CONTENT);
+                cd.setContentCustomComponent(dl);
+                cd.show();
             }
         });
         btn_begin.setClickedListener(new Component.ClickedListener() {
@@ -351,36 +375,101 @@ public class jigsawSlice extends AbilitySlice {
             tickTimer.setBaseTime(System.currentTimeMillis() - passTime);
             tickTimer.stop();
 
-            // 创建弹窗
-            CommonDialog cd = new CommonDialog(this);
-            cd.setTitleText("拼图完成");
-            cd.setContentText("恭喜，您的成绩是: " + getPlayTime());
-            cd.setAutoClosable(true);
-            cd.setButton(0, "选择图片难度", new IDialog.ClickedListener() {
+            CommonDialog cd = new CommonDialog(getContext());
+            cd.setCornerRadius(50);
+            DirectionalLayout dl = (DirectionalLayout) LayoutScatter.getInstance(getContext()).parse(ResourceTable.Layout_gameover_dialog, null, false);
+            Button replaybtn = dl.findComponentById(ResourceTable.Id_replay_btn);
+            replaybtn.setClickedListener(new Component.ClickedListener() {
                 @Override
-                public void onClick(IDialog iDialog, int i) {
+                public void onClick(Component component) {
+                    rePlay();
+                    cd.destroy();
+                }
+            });
+
+            Button choosejigbtn = dl.findComponentById(ResourceTable.Id_choosejig_btn);
+            choosejigbtn.setClickedListener(new Component.ClickedListener() {
+                @Override
+                public void onClick(Component component) {
+                    clearChipCom();
                     AbilitySlice slice = new SelectSlice();
                     Intent intent = new Intent();
                     present(slice, intent);
                     cd.destroy();
                 }
             });
-            cd.setButton(1, "重新挑战", new IDialog.ClickedListener() {
-                @Override
-                public void onClick(IDialog iDialog, int i) {
-                    rePlay();
-                    cd.destroy();
-                }
-            });
-            cd.setButton(2, "确定", new IDialog.ClickedListener() {
-                @Override
-                public void onClick(IDialog iDialog, int i) {
-                    cd.destroy();
-                }
-            });
+
+            Text playtimetext = dl.findComponentById(ResourceTable.Id_dialog_time_text);
+            playtimetext.setText(getPlayTime());
+
+            Text steptext = dl.findComponentById(ResourceTable.Id_dialog_step_text);
+            steptext.setText(this.stepCnt+"");
+
+            cd.setSize(1000, MATCH_CONTENT);
+            cd.setContentCustomComponent(dl);
             cd.show();
+
+            DirectionalLayout starlayout = dl.findComponentById(ResourceTable.Id_starlayout);
+            starlayout.removeAllComponents();
+            int starwidth = (int)(pm_px*0.1);
+            int starmargin = (int)(pm_px*0.02);
+            int starcnt = this.getStarCnt();
+            for(int i = 0; i<starcnt; i++){
+                Image star = new Image(this);
+                star.setPixelMap(ResourceTable.Media_star);
+                star.setWidth(starwidth);
+                star.setHeight(starwidth);
+                star.setMarginRight(starmargin);
+                star.setMarginRight(starmargin);
+                star.setScaleMode(Image.ScaleMode.STRETCH);
+                starlayout.addComponent(star);
+            }
+
         }
         return false;
+    }
+
+    /**
+     * 获取星星的数量
+     * @return
+     */
+    private int getStarCnt(){
+        String[] timeList = tickTimer.getText().split(":");
+        float time = Integer.parseInt(timeList[0])+ (float)(Integer.parseInt(timeList[1])/60.0);
+        float timeperchip = time/this.jigsawCnt;  // 获取每个完成每块拼图的时间
+        float stepperchip = (float) stepCnt/this.jigsawCnt;
+        int starfortime = 0, starforstep = 0;
+        int starcnt = 0;
+
+        if(timeperchip <= 0.05){  // 3秒一个
+            starfortime = 3;
+        }else if(timeperchip>0.05 && timeperchip <= 0.1){
+            starfortime = 2;     // 6秒一个
+        }else{
+            starfortime = 1;
+        }
+
+        if(stepperchip<= 2){
+            starforstep = 3;
+        }else if(stepperchip >2 && stepperchip<=4){
+            starforstep = 2;
+        }else{
+            starforstep = 1;
+        }
+
+        starcnt = Math.min(starforstep, starfortime);
+        return starcnt;
+
+    }
+
+
+    /**
+     * 清空chipimage
+     */
+    private void clearChipCom(){
+        for (Chip chip : chipMap.values()){
+            mainlayout.removeComponent(chip.getImage());
+        }
     }
 
     /**
@@ -395,6 +484,7 @@ public class jigsawSlice extends AbilitySlice {
         int blockMargin = (int) (chipWidth*0.01);
 
         blocklayout = findComponentById(ResourceTable.Id_jigsaw_layout);
+        blocklayout.removeAllComponents();
         blocklayout.setRowCount(this.jigsawRowCnt);
         blocklayout.setColumnCount(this.jigsawRowCnt);
 
@@ -417,6 +507,7 @@ public class jigsawSlice extends AbilitySlice {
 
         btn_begin = findComponentById(ResourceTable.Id_btn_begin);
         btn_tip =findComponentById(ResourceTable.Id_btn_tip);
+        btn_giveup = findComponentById(ResourceTable.Id_btn_giveup);
 
         // 初始化定时器
         tickTimer = findComponentById(ResourceTable.Id_ticktimer);
@@ -427,7 +518,7 @@ public class jigsawSlice extends AbilitySlice {
         stepCntText = findComponentById(ResourceTable.Id_stepCntText);
 
 //         初始化chipImage
-        DirectionalLayout mainlayout = findComponentById(ResourceTable.Id_mainlayout);
+        mainlayout = findComponentById(ResourceTable.Id_mainlayout);
         imageList.clear();
         for(int i = 1; i<=this.jigsawRowCnt; i++){
             for(int j = 1; j<=this.jigsawRowCnt; j++){

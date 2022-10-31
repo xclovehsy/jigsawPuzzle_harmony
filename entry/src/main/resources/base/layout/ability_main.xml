@@ -4,41 +4,57 @@
     ohos:height="match_parent"
     ohos:width="match_parent"
     ohos:alignment="center"
+    ohos:background_element="$media:bk3"
     ohos:orientation="vertical">
 
     <Text
         ohos:id="$+id:text_helloworld"
         ohos:height="match_content"
         ohos:width="match_content"
-        ohos:background_element="$graphic:background_ability_main"
+        ohos:text_color="#AB85E303"
         ohos:layout_alignment="horizontal_center"
-        ohos:text="jigsawPuzzle"
-        ohos:text_size="40vp"
+        ohos:text="拼 图 游 戏"
+        ohos:text_size="60fp"
         />
+
+
+
     <Button
-        ohos:height="match_content"
-        ohos:width="match_content"
-        ohos:text="play"
-        ohos:text_size="20fp"
+        ohos:top_margin="40fp"
+
+        ohos:height="60fp"
+        ohos:width="150fp"
+        ohos:background_element="$graphic:playbtn"
+        ohos:text_color="#FFFFFF"
+        ohos:text_size="30fp"
+
+        ohos:text="开始游戏"
         ohos:id="$+id:btn_play">
 
     </Button>
 
     <Button
-        ohos:height="match_content"
-        ohos:width="match_content"
-        ohos:text="guide"
+        ohos:height="45fp"
+        ohos:width="100fp"
+        ohos:top_margin="15fp"
+        ohos:text="游戏指导"
+        ohos:background_element="$graphic:subbtn"
+        ohos:text_color="#FFFFFF"
         ohos:text_size="20fp"
+
         ohos:id="$+id:btn_guide">
 
     </Button>
 
     <Button
         ohos:id="$+id:btn_about"
-        ohos:height="match_content"
-        ohos:width="match_content"
+        ohos:top_margin="10fp"
+        ohos:height="45fp"
+        ohos:width="100fp"
         ohos:text_size="20fp"
-        ohos:text="aboutme">
+        ohos:background_element="$graphic:subbtn"
+        ohos:text_color="#FFFFFF"
+        ohos:text="关于我">
 
     </Button>
 

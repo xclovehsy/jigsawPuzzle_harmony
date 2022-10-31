@@ -4,6 +4,7 @@
     ohos:height="match_parent"
     ohos:width="match_parent"
     ohos:alignment="center"
+    ohos:background_element="$media:bk3"
     ohos:orientation="vertical">
     <Text
         ohos:height="match_content"
@@ -11,11 +12,14 @@
         ohos:text_size="20fp"
         ohos:text="About Me">
     </Text>
+
     <Button
-        ohos:height="match_content"
-        ohos:width="match_content"
-        ohos:text="BACK"
-        ohos:text_size="40fp"
+        ohos:text="返回"
+        ohos:height="45fp"
+        ohos:width="100fp"
+        ohos:text_size="20fp"
+        ohos:background_element="$graphic:subbtn"
+        ohos:text_color="#FFFFFF"
         ohos:id="$+id:btn_back">
 
     </Button>

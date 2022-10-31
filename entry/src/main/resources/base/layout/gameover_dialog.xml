@@ -1,0 +1,129 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_content"
+    ohos:width="match_parent"
+    ohos:alignment="horizontal_center"
+    ohos:background_element="#FFEFFAF6"
+    ohos:top_margin="10fp"
+    ohos:bottom_margin="10fp"
+    ohos:orientation="vertical">
+
+    <Text
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:text_color="#AB85E303"
+        ohos:layout_alignment="horizontal_center"
+        ohos:text="恭喜完成拼图！"
+        ohos:text_size="25fp"/>
+
+
+    <DirectionalLayout
+        ohos:height="match_parent"
+        ohos:width="match_content"
+        ohos:orientation="horizontal"
+        ohos:alignment="horizontal_center">
+
+        <Text
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:text_size="18fp"
+            ohos:text_color="#AB85E303"
+            ohos:text="用时：">
+        </Text>
+
+        <Text
+            ohos:text="00:00"
+            ohos:id="$+id:dialog_time_text"
+            ohos:text_size="18fp"
+            ohos:text_color="#AB85E303"
+            ohos:height="match_content"
+            ohos:width="match_content">
+        </Text>
+
+
+
+
+    </DirectionalLayout>
+
+    <DirectionalLayout
+        ohos:height="match_parent"
+        ohos:width="match_content"
+        ohos:orientation="horizontal"
+        ohos:bottom_margin="10fp"
+        ohos:alignment="horizontal_center">
+
+        <Text
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:text_size="18fp"
+            ohos:text_color="#AB85E303"
+            ohos:text="步数：">
+        </Text>
+
+        <Text
+            ohos:text="0"
+            ohos:id="$+id:dialog_step_text"
+            ohos:text_size="18fp"
+            ohos:text_color="#AB85E303"
+            ohos:height="match_content"
+            ohos:width="match_content">
+        </Text>
+
+    </DirectionalLayout>
+
+    <DirectionalLayout
+        ohos:height="match_content"
+        ohos:width="match_parent"
+        ohos:orientation="horizontal"
+        ohos:id="$+id:starlayout"
+        ohos:alignment="horizontal_center">
+
+        <Image
+            ohos:height="40fp"
+            ohos:width="40fp"
+            ohos:image_src="$media:star"
+            ohos:scale_mode="stretch">
+        </Image>
+
+    </DirectionalLayout>
+
+
+
+    <DirectionalLayout
+        ohos:height="match_parent"
+        ohos:width="match_content"
+        ohos:orientation="horizontal"
+        ohos:top_margin="10fp"
+        ohos:alignment="horizontal_center">
+
+        <Button
+            ohos:id="$+id:choosejig_btn"
+            ohos:text="选择拼图"
+            ohos:text_size="20fp"
+            ohos:background_element="$graphic:subbtn"
+            ohos:text_color="#FFFFFF"
+            ohos:height="match_content"
+            ohos:width="95fp"
+            >
+        </Button>
+
+        <Button
+            ohos:id="$+id:replay_btn"
+            ohos:text="重新挑战"
+            ohos:text_size="20fp"
+            ohos:background_element="$graphic:playbtn"
+            ohos:text_color="#FFFFFF"
+            ohos:left_margin="10fp"
+            ohos:height="match_content"
+            ohos:width="95fp"
+            >
+        </Button>
+
+    </DirectionalLayout>
+
+
+
+
+
+</DirectionalLayout>

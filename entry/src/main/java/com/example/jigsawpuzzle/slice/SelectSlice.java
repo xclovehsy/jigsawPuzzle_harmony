@@ -50,6 +50,13 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
         pm_px=AttrHelper.vp2px(getContext().getResourceManager().getDeviceCapability().width,this);
         pg_px=AttrHelper.vp2px(getContext().getResourceManager().getDeviceCapability().height,this);
 
+        diff = 3;
+        model = 0;
+        diffText = findComponentById(ResourceTable.Id_diffText);
+        diffText.setText("3×3");
+        modelText = findComponentById(ResourceTable.Id_modelText);
+        modelText.setText("经典拼图");
+
         // 初始化组件
         initCom();
 
@@ -92,7 +99,7 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
             @Override
             public void onClick(Component component) {
                 CommonDialog cd = new CommonDialog(getContext());
-                cd.setCornerRadius(15);
+                cd.setCornerRadius(50);
                 DirectionalLayout dl = (DirectionalLayout) LayoutScatter.getInstance(getContext()).parse(ResourceTable.Layout_diff_dialog, null, false);
                 diffPicker = dl.findComponentById(ResourceTable.Id_diff_picker);
 
@@ -167,7 +174,7 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
             @Override
             public void onClick(Component component) {
                 CommonDialog cd = new CommonDialog(getContext());
-                cd.setCornerRadius(15);
+                cd.setCornerRadius(50);
                 DirectionalLayout dl = (DirectionalLayout) LayoutScatter.getInstance(getContext()).parse(ResourceTable.Layout_model_dialog, null, false);
                 Button jigbtn = dl.findComponentById(ResourceTable.Id_jig_btn);
                 jigbtn.setClickedListener(new Component.ClickedListener() {

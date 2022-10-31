@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_content"
+    ohos:width="match_parent"
+    ohos:alignment="horizontal_center"
+    ohos:background_element="#FFEFFAF6"
+    ohos:top_margin="10fp"
+    ohos:bottom_margin="10fp"
+    ohos:orientation="vertical">
+
+    <Text
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:text_color="#AB85E303"
+        ohos:layout_alignment="horizontal_center"
+        ohos:text="很遗憾未完成拼图！"
+        ohos:text_size="25fp"/>
+
+    <Text
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:text="您未将所有拼图"
+        ohos:top_margin="10fp"
+        ohos:layout_alignment="horizontal_center"
+        ohos:text_color="#AB85E303"
+        ohos:text_size="20fp"
+        >
+    </Text>
+
+    <Text
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:text="放到正确的位置！"
+        ohos:layout_alignment="horizontal_center"
+        ohos:text_color="#AB85E303"
+        ohos:text_size="20fp"
+        >
+    </Text>
+
+
+    <DirectionalLayout
+        ohos:height="match_parent"
+        ohos:width="match_content"
+        ohos:orientation="horizontal"
+        ohos:top_margin="10fp"
+        ohos:alignment="horizontal_center">
+
+        <Button
+            ohos:id="$+id:choosejig_btn"
+            ohos:text="放弃"
+            ohos:text_size="20fp"
+            ohos:background_element="$graphic:giveupbtn"
+            ohos:text_color="#FFFFFF"
+            ohos:height="match_content"
+            ohos:width="70fp"
+            >
+        </Button>
+
+        <Button
+            ohos:id="$+id:replay_btn"
+            ohos:text="重新挑战"
+            ohos:text_size="20fp"
+            ohos:background_element="$graphic:subbtn"
+            ohos:text_color="#FFFFFF"
+            ohos:left_margin="10fp"
+            ohos:height="match_content"
+            ohos:width="95fp"
+            >
+        </Button>
+
+    </DirectionalLayout>
+
+    <Button
+        ohos:id="$+id:goon_btn"
+        ohos:text="继续"
+        ohos:text_size="20fp"
+        ohos:top_margin="5fp"
+        ohos:background_element="$graphic:playbtn"
+        ohos:text_color="#FFFFFF"
+        ohos:height="match_content"
+        ohos:width="70fp"
+        >
+    </Button>
+
+
+
+
+
+</DirectionalLayout>

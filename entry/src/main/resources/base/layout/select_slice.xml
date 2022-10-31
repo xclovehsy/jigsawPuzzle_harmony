@@ -4,12 +4,14 @@
     ohos:height="match_parent"
     ohos:width="match_parent"
     ohos:alignment="center"
+    ohos:background_element="$media:bk3"
     ohos:orientation="vertical">
 
     <Text
         ohos:height="match_content"
         ohos:width="match_content"
         ohos:text="请选择拼图图案"
+        ohos:text_color="#AB85E303"
         ohos:text_size="30fp">
     </Text>
 
@@ -27,11 +29,15 @@
         ohos:layout_alignment="horizontal_center">
 
         <Button
-            ohos:height="match_content"
-            ohos:width="match_content"
             ohos:text="难度选择"
             ohos:id="$+id:selectDiffBtn"
-            ohos:text_size="20fp">
+            ohos:height="45fp"
+            ohos:width="100fp"
+            ohos:text_size="20fp"
+            ohos:background_element="$graphic:subbtn"
+            ohos:text_color="#FFFFFF"
+
+            >
         </Button>
 
         <Text
@@ -55,10 +61,13 @@
         ohos:layout_alignment="horizontal_center">
         <Button
             ohos:id="$+id:selectModelBtn"
-            ohos:height="match_content"
-            ohos:width="match_content"
             ohos:text="模式选择"
-            ohos:text_size="20fp">
+            ohos:height="45fp"
+            ohos:width="100fp"
+            ohos:text_size="20fp"
+            ohos:background_element="$graphic:subbtn"
+            ohos:text_color="#FFFFFF"
+            >
         </Button>
 
         <Text
@@ -80,22 +89,27 @@
         ohos:layout_alignment="horizontal_center">
 
         <Button
-            ohos:height="match_content"
-            ohos:width="match_content"
             ohos:text="返回"
-            ohos:text_size="30fp"
+            ohos:height="45fp"
+            ohos:width="100fp"
+            ohos:text_size="20fp"
+            ohos:background_element="$graphic:subbtn"
+            ohos:text_color="#FFFFFF"
+
             ohos:id="$+id:btn_back">
         </Button>
 
         <Button
-            ohos:left_margin="10fp"
-            ohos:height="match_content"
-            ohos:width="match_content"
-            ohos:text="开始游戏"
-            ohos:text_size="30fp"
-            ohos:id="$+id:btn_play">
+        ohos:left_margin="10fp"
+        ohos:text="开始游戏"
+        ohos:height="60fp"
+        ohos:width="150fp"
+        ohos:background_element="$graphic:playbtn"
+        ohos:text_color="#FFFFFF"
+        ohos:text_size="30fp"
+        ohos:id="$+id:btn_play">
 
-        </Button>
+    </Button>
     </DirectionalLayout>
 
 

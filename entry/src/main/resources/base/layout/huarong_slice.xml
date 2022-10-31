@@ -56,9 +56,8 @@
     <TableLayout
         ohos:height="match_content"
         ohos:width="match_content"
-        ohos:orientation="vertical"
+        ohos:orientation="horizontal"
         ohos:id="$+id:jigsaw_layout">
-
     </TableLayout>
 
     <DirectionalLayout
@@ -69,8 +68,8 @@
         ohos:width="match_content">
 
         <Button
-            ohos:id="$+id:btn_tip"
-            ohos:text="提示"
+            ohos:id="$+id:btn_end"
+            ohos:text="提交"
             ohos:height="40fp"
             ohos:width="90fp"
             ohos:background_element="$graphic:subbtn"
@@ -105,14 +104,14 @@
         >
     </Button>
 
-<!--    <Image-->
-<!--        ohos:id="$+id:img_tip"-->
-<!--        ohos:scale_mode="stretch"-->
-<!--        ohos:height="250fp"-->
-<!--        ohos:width="250fp"-->
-<!--        ohos:margin="10fp"-->
-<!--        ohos:image_src="$media:dog">-->
-<!--    </Image>-->
+    <Image
+        ohos:id="$+id:img_tip"
+        ohos:scale_mode="stretch"
+        ohos:height="100fp"
+        ohos:width="100fp"
+        ohos:margin="10fp"
+        ohos:image_src="$media:dog">
+    </Image>
 
 
 
