@@ -3,7 +3,10 @@ package com.example.jigsawpuzzle.slice;
 import com.example.jigsawpuzzle.ResourceTable;
 import com.example.jigsawpuzzle.conponent.TestPageProvider;
 import ohos.aafwk.ability.AbilitySlice;
+import ohos.aafwk.ability.DataAbilityHelper;
+import ohos.aafwk.ability.DataAbilityRemoteException;
 import ohos.aafwk.content.Intent;
+import ohos.aafwk.content.Operation;
 import ohos.agp.colors.RgbColor;
 import ohos.agp.colors.RgbPalette;
 import ohos.agp.components.*;
@@ -12,8 +15,15 @@ import ohos.agp.components.element.StateElement;
 import ohos.agp.window.dialog.CommonDialog;
 import ohos.hiviewdfx.HiLog;
 import ohos.hiviewdfx.HiLogLabel;
+import ohos.media.image.ImageSource;
+import ohos.media.image.PixelMap;
+import ohos.media.photokit.metadata.AVStorage;
+import ohos.utils.net.Uri;
+
 import static ohos.agp.components.ComponentContainer.LayoutConfig.MATCH_CONTENT; // 注意引入
 
+import java.io.FileDescriptor;
+import java.io.FileNotFoundException;
 import java.util.ArrayList;
 
 public class SelectSlice extends AbilitySlice implements Component.ClickedListener {
@@ -22,12 +32,16 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
     private int diff = 3, diffNewVal, model = 0;  // model=0 jig  model=1 huarong
     private int jigsawId = ResourceTable.Media_dog;
     private PageSlider pageSlider;
-    private Button selectDiffBtn = null, selectModelBtn = null;
+    private Button selectDiffBtn = null, selectModelBtn = null, selectFromAlbumBtn = null;
     private Picker diffPicker;
     private int pm_px, pg_px;
     private boolean isShowNum = true;
     private Text diffText, modelText;
-
+    private int RequestCode = 1234;
+    private final int imgRequestCode = 1123;
+    private Image albumImage = null;
+    private boolean isSelectFromAlbum = false;
+    private int imageWidth, imageHeight;
 
     private int[] images = {
             ResourceTable.Media_dog,
@@ -47,27 +61,102 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
         super.onStart(intent);
         super.setUIContent(ResourceTable.Layout_select_slice);
 
+        requestPermissionsFromUser(new String[]{"ohos.permission.READ_USER_STORAGE","ohos.permission.CAMERA"},RequestCode);
+
         pm_px=AttrHelper.vp2px(getContext().getResourceManager().getDeviceCapability().width,this);
         pg_px=AttrHelper.vp2px(getContext().getResourceManager().getDeviceCapability().height,this);
-
-        diff = 3;
-        model = 0;
-        diffText = findComponentById(ResourceTable.Id_diffText);
-        diffText.setText("3×3");
-        modelText = findComponentById(ResourceTable.Id_modelText);
-        modelText.setText("经典拼图");
 
         // 初始化组件
         initCom();
 
         // 添加响应事件
         addListener();
+
+        albumImage.setPixelMap(ResourceTable.Media_dog);
+
+    }
+
+
+
+    private void selectPic() {
+        Intent intent = new Intent();
+        Operation opt = new Intent.OperationBuilder().withAction("android.intent.action.GET_CONTENT").build();
+        intent.setOperation(opt);
+        intent.addFlags(Intent.FLAG_NOT_OHOS_COMPONENT);
+        intent.setType("image/*");
+        startAbilityForResult(intent, imgRequestCode);
+
+    }
+
+    @Override
+    protected void onAbilityResult(int requestCode, int resultCode, Intent resultData) {
+        if (requestCode == imgRequestCode) {
+            HiLog.info(label, "选择图片getUriString:" + resultData.getUriString());
+            //选择的Img对应的Uri
+            String chooseImgUri = resultData.getUriString();
+            HiLog.info(label, "选择图片getScheme:" + chooseImgUri.substring(chooseImgUri.lastIndexOf('/')));
+
+            //定义数据能力帮助对象
+            DataAbilityHelper helper = DataAbilityHelper.creator(getContext());
+            //定义图片来源对象
+            ImageSource imageSource = null;
+            //获取选择的Img对应的Id
+            String chooseImgId = null;
+            //如果是选择文件则getUriString结果为content://com.android.providers.media.documents/document/image%3A30，其中%3A是":"的URL编码结果，后面的数字就是image对应的Id
+            //如果选择的是图库则getUriString结果为content://media/external/images/media/30，最后就是image对应的Id
+            //这里需要判断是选择了文件还是图库
+
+            if (chooseImgUri.lastIndexOf("%3A") != -1) {
+                chooseImgId = chooseImgUri.substring(chooseImgUri.lastIndexOf("%3A") + 3);
+            } else {
+                chooseImgId = chooseImgUri.substring(chooseImgUri.lastIndexOf('/') + 1);
+            }
+
+            //获取图片对应的uri，由于获取到的前缀是content，我们替换成对应的dataability前缀
+            Uri uri = Uri.appendEncodedPathToUri(AVStorage.Images.Media.EXTERNAL_DATA_ABILITY_URI, chooseImgId);
+            HiLog.info(label, "选择图片dataability路径:" + uri.toString());
+
+            try {
+                //读取图片
+                FileDescriptor fd = helper.openFile(uri, "r");
+                imageSource = ImageSource.create(fd, null);
+                //创建位图
+                PixelMap pixelMap = imageSource.createPixelmap(null);
+                //设置图片控件对应的位图
+
+
+//                // 设置图片的位置和长宽
+//                albumImage.setContentPositionY(pageSlider.getLeft());
+                HiLog.info(label, "albumx="+pageSlider.getLeft() + ", y=" + pageSlider.getTop());
+//                albumImage.setContentPositionX(pageSlider.getTop());
+                albumImage.setWidth((int)(pageSlider.getWidth()*0.95));
+                albumImage.setHeight((int)(pageSlider.getHeight()*0.95));
+                pageSlider.setHeight(0);
+                pageSlider.setWidth(0);
+                albumImage.setPixelMap(pixelMap);
+                isSelectFromAlbum = true;
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                if (imageSource != null) {
+                    imageSource.release();
+                }
+            }
+        }
     }
 
     /**
      * 添加响应事件
      */
     private void addListener(){
+
+        selectFromAlbumBtn.setClickedListener(new Component.ClickedListener() {
+            @Override
+            public void onClick(Component component) {
+                selectPic();
+            }
+        });
 
         // 图片选择框
         pageSlider.addPageChangedListener(new PageSlider.PageChangedListener() {
@@ -80,16 +169,6 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
             @Override
             public void onPageChosen(int itemPos) {
                 HiLog.info(label, "onPageChosen-itemPos=" + itemPos);
-//                if(itemPos == 0) jigsawName = "dog";
-//                else if(itemPos == 1) jigsawName = "doraemon";
-//                else if(itemPos == 2) jigsawName = "ultraman";
-//                else if(itemPos == 3) jigsawName = "hellokitty";
-//                else if(itemPos == 4) jigsawName = "mickey";
-//                else if(itemPos == 5) jigsawName = "minion";
-//                else if(itemPos == 6) jigsawName = "snoopy";
-//                else if(itemPos == 7) jigsawName = "snow";
-//                else if(itemPos == 8) jigsawName = "spongebob";
-//                else if(itemPos == 9) jigsawName = "winnie";
                 jigsawId = images[itemPos];
             }
         });
@@ -248,6 +327,21 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
         return thumbElement;
     }
 
+    private void resetAll(){
+        diff = 3;
+        model = 0;
+        diffText = findComponentById(ResourceTable.Id_diffText);
+        diffText.setText("3×3");
+        modelText = findComponentById(ResourceTable.Id_modelText);
+        modelText.setText("经典拼图");
+
+        albumImage.setWidth(0);
+        albumImage.setHeight(0);
+        pageSlider.setWidth(imageWidth);
+        pageSlider.setHeight(imageHeight);
+        isSelectFromAlbum = false;
+    }
+
     /**
      * 初始化组件
      */
@@ -263,6 +357,13 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
         selectModelBtn = findComponentById(ResourceTable.Id_selectModelBtn);
         diffText = findComponentById(ResourceTable.Id_diffText);
         modelText = findComponentById(ResourceTable.Id_modelText);
+        selectFromAlbumBtn = findComponentById(ResourceTable.Id_selectfromalbumbtn);
+
+        imageWidth=  pageSlider.getWidth();
+        imageHeight = pageSlider.getHeight();
+        albumImage = findComponentById(ResourceTable.Id_albumImage);
+        albumImage.setWidth(0);
+        albumImage.setHeight(0);
     }
 
     /**
@@ -334,15 +435,18 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
                 intent.setParam("jigsawId", jigsawId);
                 intent.setParam("diff", diff);
                 intent.setParam("isShowNum", isShowNum);
+                intent.setParam("isselectFromAlbum", isSelectFromAlbum);
                 present(slice, intent);
-
+                resetAll();
             }else if(model == 1){   // 华融道
                 AbilitySlice slice = new HuarongRoadNine();
                 Intent intent = new Intent();
                 intent.setParam("jigsawId", jigsawId);
                 intent.setParam("diff", diff);
                 intent.setParam("isShowNum", isShowNum);
+                intent.setParam("isselectFromAlbum", isSelectFromAlbum);
                 present(slice, intent);
+                resetAll();
             }
 
         }

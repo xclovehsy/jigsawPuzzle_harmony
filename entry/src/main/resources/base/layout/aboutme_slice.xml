@@ -10,12 +10,28 @@
         ohos:height="match_content"
         ohos:width="match_content"
         ohos:text_size="20fp"
-        ohos:text="About Me">
+        ohos:text="作者姓名：徐聪">
+    </Text>
+    <Text
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:top_margin="20fp"
+        ohos:text_size="20fp"
+        ohos:text="联系方式：2505327613@qq.com">
+    </Text>
+
+    <Text
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:top_margin="20fp"
+        ohos:text_size="20fp"
+        ohos:text="发布时间：2022年11月01日">
     </Text>
 
     <Button
         ohos:text="返回"
         ohos:height="45fp"
+        ohos:top_margin="20fp"
         ohos:width="100fp"
         ohos:text_size="20fp"
         ohos:background_element="$graphic:subbtn"

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<DirectionalLayout
+    xmlns:ohos="http://schemas.huawei.com/res/ohos"
+    ohos:height="match_parent"
+    ohos:width="match_parent"
+    ohos:orientation="vertical">
+
+    <Button
+        ohos:id="$+id:btnChooseImg"
+        ohos:height="match_content"
+        ohos:width="match_content"
+        ohos:text="选择图片"
+        ohos:text_size="40vp"
+        ohos:background_element="gray">
+
+    </Button>
+
+    <Image
+        ohos:id="$+id:showChooseImg"
+        ohos:height="match_content"
+        ohos:width="match_content"
+        >
+
+    </Image>
+
+</DirectionalLayout>
+
+

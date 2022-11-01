@@ -5,6 +5,9 @@ import com.example.jigsawpuzzle.game.Block;
 import com.example.jigsawpuzzle.game.MyImage;
 import ohos.aafwk.ability.AbilitySlice;
 import ohos.aafwk.content.Intent;
+import ohos.agp.animation.Animator;
+import ohos.agp.animation.AnimatorGroup;
+import ohos.agp.animation.AnimatorProperty;
 import ohos.agp.components.*;
 import ohos.agp.render.Canvas;
 import ohos.agp.render.Paint;
@@ -49,6 +52,10 @@ public class HuarongRoadNine extends AbilitySlice {
     private int stepCnt = 0;
     private boolean isShowNum = true; //是否显示数字
     private Button backbtn;
+//    private Map<Integer, Float> blockXMap, blockYMap;   // 用于记录block的x和y
+    private Image curBlockImage;
+    private float curBlockImageX, curBlockImageY;
+    private boolean chipClickable = true;
 
     @Override
     public void onStart(Intent intent) {
@@ -100,56 +107,16 @@ public class HuarongRoadNine extends AbilitySlice {
         int blockWidth = (int) (tableLayoutWidth / this.jigsawRowCnt);
         int blockMargin = (int) (blockWidth * 0.01);
 
-//        // 设置主布局
-//        DirectionalLayout mainLayout = new DirectionalLayout(this);
-//        mainLayout.setOrientation(Component.VERTICAL);
-//        mainLayout.setWidth(ComponentContainer.LayoutConfig.MATCH_PARENT);
-//        mainLayout.setHeight(ComponentContainer.LayoutConfig.MATCH_PARENT);
-//        mainLayout.setAlignment(1);
-
-//        // 头部信息布局
-//        DirectionalLayout headLayout = new DirectionalLayout(this);
-//        headLayout.setOrientation(Component.HORIZONTAL);
-//        headLayout.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        headLayout.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        headLayout.setAlignment(1);
-
-        // 头部信息
-//        Text timeText = new Text(this), stepText = new Text(this);
         this.stepCntText = findComponentById(ResourceTable.Id_stepCntText);
-//        timeText.setText("用时："); stepText.setText("步数："); stepCntText.setText("10 步");
-//        timeText.setTextSize(textSize); stepText.setTextSize(textSize); stepCntText.setTextSize(textSize);
-//
-//        timeText.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        timeText.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        stepText.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        stepText.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        stepCntText.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        stepCntText.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        stepText.setMarginLeft(textMargin);
 
         // 添加计时器
         this.tickTimer = findComponentById(ResourceTable.Id_ticktimer);
-//        tickTimer.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        tickTimer.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        tickTimer.setVisibility(Component.INVISIBLE);
         tickTimer.setFormat("mm:ss:SSSS");
         tickTimer.setCountDown(false);
-//        tickTimer.setTextSize(textSize);
 
-//        headLayout.addComponent(timeText);headLayout.addComponent(tickTimer);
-//        headLayout.addComponent(stepText);headLayout.addComponent(stepCntText);
-//        mainLayout.addComponent(headLayout);
         stepCnt = 0;
         setStepCntText();
 
-        // 添加拼图布局
-//        this.jigsawLayout = new TableLayout(this);
-//        this.jigsawLayout.setColumnCount(this.jigsawRowCnt);
-//        this.jigsawLayout.setRowCount(this.jigsawRowCnt);
-//        this.jigsawLayout.setOrientation(Component.HORIZONTAL);
-//        this.jigsawLayout.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        this.jigsawLayout.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
         this.jigsawLayout = findComponentById(ResourceTable.Id_jigsaw_layout);
         jigsawLayout.removeAllComponents();
         jigsawLayout.setColumnCount(jigsawRowCnt);
@@ -167,43 +134,19 @@ public class HuarongRoadNine extends AbilitySlice {
                 block.setMarginLeft(blockMargin);
                 block.setMarginRight(blockMargin);
                 block.setMarginTop(blockMargin);
-//                block.setPixelMap(this.jigsawPixelMap);
+
                 this.jigsawLayout.addComponent(block);
                 this.blockList.add(block);
             }
         }
-//        mainLayout.addComponent(this.jigsawLayout);
 
-        // 开始结束按钮布局
-//        DirectionalLayout buttonLayout = new DirectionalLayout(this);
-//        buttonLayout.setOrientation(Component.HORIZONTAL);
-//        buttonLayout.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        buttonLayout.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        buttonLayout.setAlignment(1);
 
         this.btn_begin = findComponentById(ResourceTable.Id_btn_begin);
-//        btn_begin.setText("开始游戏");
-//        btn_begin.setTextSize(textSize);
-//        btn_begin.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        btn_begin.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-
         this.btn_end = findComponentById(ResourceTable.Id_btn_end);
-//        btn_end.setText("结束");
-//        btn_end.setTextSize(textSize);
-//        btn_end.setWidth(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        btn_end.setHeight(ComponentContainer.LayoutConfig.MATCH_CONTENT);
-//        btn_end.setMarginLeft(textMargin);
-//        buttonLayout.addComponent(btn_begin);
-//        buttonLayout.addComponent(btn_end);
-//        mainLayout.addComponent(buttonLayout);
         btn_end.setClickable(false);
 
         this.img_tip = findComponentById(ResourceTable.Id_img_tip);
-//        img_tip.setWidth(tipSize);
-//        img_tip.setHeight(tipSize);
-//        img_tip.setScaleMode(Image.ScaleMode.STRETCH);
         img_tip.setPixelMap(this.jigsawPixelMap);
-//        mainLayout.addComponent(img_tip);
 
         passTime = 0;
         startTime = System.currentTimeMillis();
@@ -211,7 +154,6 @@ public class HuarongRoadNine extends AbilitySlice {
 
         this.backbtn = findComponentById(ResourceTable.Id_btn_giveup);
 
-//        super.setUIContent(mainLayout);
     }
 
     /**
@@ -263,7 +205,6 @@ public class HuarongRoadNine extends AbilitySlice {
 
     /**
      * 切割图片功能
-     *
      * @param pixelMap
      * @return
      */
@@ -343,26 +284,88 @@ public class HuarongRoadNine extends AbilitySlice {
     /**
      * 交换block
      */
-    private void blockSwap(Block block) {
-        int x = block.getX();
-        int y = block.getY();
+    private void blockSwap(Block curBlock) {
+        if(!chipClickable){
+            return;
+        }
 
-        for (Block block1 : BlockMap.values()) {
-            int tx = block1.getX(), ty = block1.getY();
-            if (Math.abs(tx + ty - x - y) == 1 && block1.isBlank()) {
-                MyImage timg = block.getImage();
-                block.setImage(block1.getImage());
-                block1.setImage(timg);
+        int x = curBlock.getX();
+        int y = curBlock.getY();
 
-                block.setBlank(true);
-                block1.setBlank(false);
+        for (Block tagBlock : BlockMap.values()) {
+            int tx = tagBlock.getX(), ty = tagBlock.getY();
+            if (Math.abs(tx + ty - x - y) == 1 && tagBlock.isBlank()) {
+//                HiLog.info()
 
-                // 设置
-                block.getView().setVisibility(Component.INVISIBLE);
-                block1.getView().setVisibility(Component.VISIBLE);
-                block1.RenewImage();
+                // 添加动画
+                Image curImage = curBlock.getView();
+                Image tarImage = tagBlock.getView();
 
-                this.stepCnt += 1;
+                AnimatorProperty animatorProperty=new AnimatorProperty();
+                animatorProperty.setTarget(curImage);
+                animatorProperty.setDuration(500);
+                animatorProperty.setStateChangedListener(new Animator.StateChangedListener() {
+                    @Override
+                    public void onStart(Animator animator) {
+                        chipClickable = false;
+                    }
+                    @Override
+                    public void onStop(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onCancel(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onEnd(Animator animator) {
+                        chipClickable = true;
+                        curBlockImage.setContentPositionX(curBlockImageX);
+                        curBlockImage.setContentPositionY(curBlockImageY);
+
+                        // 设置
+                        curBlock.getView().setVisibility(Component.INVISIBLE);
+                        tagBlock.getView().setVisibility(Component.VISIBLE);
+                        tagBlock.RenewImage();
+                    }
+
+                    @Override
+                    public void onPause(Animator animator) {
+
+                    }
+
+                    @Override
+                    public void onResume(Animator animator) {
+
+                    }
+                });
+                Component parent = (Component) curImage.getComponentParent();
+                animatorProperty.moveFromX(curImage.getContentPositionX()).moveToX(tarImage.getContentPositionX());
+                animatorProperty.moveFromY(curImage.getContentPositionY()).moveToY(tarImage.getContentPositionY());
+                HiLog.info(label, "blockswap, curX="+curImage.getContentPositionX()+", curY="+curImage.getContentPositionY());
+                HiLog.info(label, "blockswap, tarX="+tarImage.getContentPositionX()+", tarY="+tarImage.getContentPositionY());
+                HiLog.info(label, "blockswap, tarblockX=" + tagBlock.getX()+", tarblockY="+tagBlock.getY() + ", tarblockx=" + tagBlock.getView().getContentPositionX() + ", tarblocky=" + tagBlock.getView().getContentPositionY());
+                curBlockImage = curImage;
+                curBlockImageX = curImage.getContentPositionX();
+                curBlockImageY = curImage.getContentPositionY();
+
+                animatorProperty.start();
+
+
+
+                // image交换信息
+                MyImage timg = curBlock.getImage();
+                curBlock.setImage(tagBlock.getImage());
+                tagBlock.setImage(timg);
+
+                curBlock.setBlank(true);
+                tagBlock.setBlank(false);
+
+                HiLog.info(label, "blockswap");
+
+                stepCnt += 1;
                 setStepCntText();
             }
         }
@@ -509,37 +512,6 @@ public class HuarongRoadNine extends AbilitySlice {
                 starlayout.addComponent(star);
             }
 
-
-//            // 创建弹窗
-//            CommonDialog cd = new CommonDialog(this);
-//            cd.setTitleText("拼图完成");
-//            cd.setContentText("恭喜，您的成绩是: " + getPlayTime());
-//            cd.setAutoClosable(true);
-//            cd.setButton(0, "选择图片难度", new IDialog.ClickedListener() {
-//                @Override
-//                public void onClick(IDialog iDialog, int i) {
-//                    AbilitySlice slice = new SelectSlice();
-//                    Intent intent = new Intent();
-//                    present(slice, intent);
-//                    cd.destroy();
-//                }
-//            });
-//            cd.setButton(1, "重新挑战", new IDialog.ClickedListener() {
-//                @Override
-//                public void onClick(IDialog iDialog, int i) {
-//                    rePlay();
-//                    cd.destroy();
-//                    btn_end.setClickable(false);
-//                    btn_begin.setClickable(true);
-//                }
-//            });
-//            cd.setButton(2, "确定", new IDialog.ClickedListener() {
-//                @Override
-//                public void onClick(IDialog iDialog, int i) {
-//                    cd.destroy();
-//                }
-//            });
-//            cd.show();
         } else {
 
             CommonDialog cd = new CommonDialog(getContext());
@@ -577,34 +549,6 @@ public class HuarongRoadNine extends AbilitySlice {
             cd.setContentCustomComponent(dl);
             cd.show();
 
-//            // 创建弹窗
-//            CommonDialog cd = new CommonDialog(this);
-//            cd.setTitleText("拼图未完成");
-//            cd.setContentText("您未将所有拼图放到正确的位置！");
-//            cd.setAutoClosable(true);
-//            cd.setButton(0, "放弃挑战", new IDialog.ClickedListener() {
-//                @Override
-//                public void onClick(IDialog iDialog, int i) {
-//                    AbilitySlice slice = new SelectSlice();
-//                    Intent intent = new Intent();
-//                    present(slice, intent);
-//                    cd.destroy();
-//                }
-//            });
-//            cd.setButton(1, "重新挑战", new IDialog.ClickedListener() {
-//                @Override
-//                public void onClick(IDialog iDialog, int i) {
-//                    rePlay();
-//                    cd.destroy();
-//                }
-//            });
-//            cd.setButton(2, "确定", new IDialog.ClickedListener() {
-//                @Override
-//                public void onClick(IDialog iDialog, int i) {
-//                    cd.destroy();
-//                }
-//            });
-//            cd.show();
         }
         return false;
     }

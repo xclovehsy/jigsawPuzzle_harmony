@@ -7,19 +7,56 @@
     ohos:background_element="$media:bk3"
     ohos:orientation="vertical">
 
-    <Text
+    <DirectionalLayout
         ohos:height="match_content"
         ohos:width="match_content"
-        ohos:text="请选择拼图图案"
-        ohos:text_color="#AB85E303"
-        ohos:text_size="30fp">
-    </Text>
+        ohos:orientation="horizontal"
+        ohos:layout_alignment="horizontal_center">
 
-    <PageSlider
-        ohos:id="$+id:page_slider"
-        ohos:height="300vp"
-        ohos:width="300vp"
-        ohos:layout_alignment="horizontal_center"/>
+        <Text
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:text="选择拼图图案"
+            ohos:text_color="#AB85E303"
+            ohos:text_size="30fp">
+        </Text>
+
+        <Button
+            ohos:id="$+id:selectfromalbumbtn"
+            ohos:text="相册选择"
+            ohos:height="45fp"
+            ohos:width="100fp"
+            ohos:left_margin="10fp"
+            ohos:text_size="20fp"
+            ohos:background_element="$graphic:subbtn"
+            ohos:visibility="hide"
+            ohos:text_color="#FFFFFF"
+            >
+        </Button>
+
+    </DirectionalLayout>
+
+    <DirectionalLayout
+        ohos:height="match_content"
+        ohos:orientation="horizontal"
+        ohos:width="match_content">
+
+        <PageSlider
+            ohos:id="$+id:page_slider"
+            ohos:height="300vp"
+            ohos:width="300vp"
+            ohos:layout_alignment="horizontal_center"/>
+
+        <Image
+            ohos:height="match_content"
+            ohos:width="match_content"
+            ohos:top_margin="5fp"
+            ohos:id="$+id:albumImage"
+            ohos:image_src="$media:dog"
+            ohos:scale_mode="stretch">
+
+        </Image>
+    </DirectionalLayout>
 
     <DirectionalLayout
         ohos:height="match_content"
@@ -49,9 +86,9 @@
             ohos:id="$+id:diffText">
         </Text>
 
-
-
     </DirectionalLayout>
+
+
 
     <DirectionalLayout
         ohos:height="match_content"
@@ -111,6 +148,7 @@
 
     </Button>
     </DirectionalLayout>
+
 
 
 

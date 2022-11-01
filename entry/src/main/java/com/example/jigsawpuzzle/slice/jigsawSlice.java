@@ -33,11 +33,6 @@ import static ohos.agp.components.ComponentContainer.LayoutConfig.MATCH_CONTENT;
 
 public class jigsawSlice extends AbilitySlice {
     static final HiLogLabel label = new HiLogLabel(HiLog.LOG_APP,0,"MY_TAG");
-//    private Image chip1, chip2, chip3, chip4, tip;
-//
-//    private int[] imgIds = {ResourceTable.Media_dog411, ResourceTable.Media_dog412, ResourceTable.Media_dog421, ResourceTable.Media_dog422};
-//    private int[] chipIds = {ResourceTable.Id_chip1, ResourceTable.Id_chip2, ResourceTable.Id_chip3, ResourceTable.Id_chip4};
-//    private int tipId = ResourceTable.Media_dog;
     private Map<Image, Chip> chipMap = new HashMap<>();
 
     private List<Image> imageList = new LinkedList<>();
@@ -61,6 +56,7 @@ public class jigsawSlice extends AbilitySlice {
     private List<PixelMap> pixelMapList = null;
     private int chipWidth = 0;
     private DirectionalLayout mainlayout = null;
+    private boolean isSelectFromAlbum = false;
 
     @Override
     public void onStart(Intent intent) {
@@ -71,13 +67,31 @@ public class jigsawSlice extends AbilitySlice {
         this.jigsawRowCnt = intent.getIntParam("diff", 3);
         this.isShowNum = intent.getBooleanParam("isShowNum", true);
         this.jigsawCnt = (int) Math.pow(this.jigsawRowCnt, 2);
+        this.isSelectFromAlbum = intent.getBooleanParam("isselectFromAlbum", false);
+
         HiLog.info(label, "jigsawCnt="+jigsawCnt);
 
         pm_px=AttrHelper.vp2px(getContext().getResourceManager().getDeviceCapability().width,this);
         pg_px=AttrHelper.vp2px(getContext().getResourceManager().getDeviceCapability().height,this);
 
         // 获取拼图图片资源
+//        if(isSelectFromAlbum){
+////            DirectionalLayout dl = (DirectionalLayout) LayoutScatter.getInstance(getContext()).parse(ResourceTable.Layout_select_slice, null, false);
+//            this.jigsawPixelMap = image.getPixelMap();
+//        }else{
+//            this.jigsawPixelMap = getPixelMap(jigsawId);
+//        }
         this.jigsawPixelMap = getPixelMap(jigsawId);
+//        Image image = (Image) findComponentById(ResourceTable.Id_showChooseImg);
+//        Image image2 = (Image) findComponentById(ResourceTable.Id_albumImage);
+//        PixelMap p = image.getPixelMap();
+
+        Image cur1= (Image) findComponentById(ResourceTable.Id_albumImage);
+        Image te = new Image(this);
+        te.setHeight(0);
+        te.setWidth(0);
+//        te.setPixelMap(cur1.getPixelMap());
+
 
         // 拼图切割
         this.pixelMapList = cutPic(this.jigsawPixelMap);
@@ -88,8 +102,8 @@ public class jigsawSlice extends AbilitySlice {
 
 //         设置chip图片
         setChip();
-//
-////         添加响应事件
+
+//         添加响应事件
         addListener();
 
     }
@@ -570,7 +584,7 @@ public class jigsawSlice extends AbilitySlice {
      * @return
      */
     private boolean inPosition(Component chip, Component blank) {
-        int len = (int)(chipWidth*0.1);
+        int len = (int)(chipWidth*0.15);
         Component parent = (Component) blank.getComponentParent();
         float chipX = chip.getContentPositionX(), chipY = chip.getContentPositionY();
         float blankX = blank.getLeft()+parent.getLeft(), blankY = blank.getTop()+parent.getTop();

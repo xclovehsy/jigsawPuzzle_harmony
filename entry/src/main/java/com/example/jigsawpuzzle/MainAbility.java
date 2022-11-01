@@ -14,6 +14,7 @@ public class MainAbility extends Ability {
 //        super.setMainRoute(SelectSlice.class.getName());
 //        super.setMainRoute(HuarongRoadNine.class.getName());
 //        super.setMainRoute(jigsawSlice.class.getName());
+//        super.setMainRoute(test.class.getName());
 
 
 
