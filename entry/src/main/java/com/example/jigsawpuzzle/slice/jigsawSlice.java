@@ -300,7 +300,6 @@ public class jigsawSlice extends AbilitySlice {
                     for(Blank blank: BlankList){
                         if(inPosition(component, blank.getImage()) && !blank.isOccupy()){
                             Component parent = (Component) blank.getImage().getComponentParent();
-
                             component.setContentPositionX(blank.getImage().getLeft()+parent.getLeft());
                             component.setContentPositionY(blank.getImage().getTop()+parent.getTop());
 

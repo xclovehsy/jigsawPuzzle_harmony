@@ -288,14 +288,12 @@ public class HuarongRoadNine extends AbilitySlice {
         if(!chipClickable){
             return;
         }
-
         int x = curBlock.getX();
         int y = curBlock.getY();
-
         for (Block tagBlock : BlockMap.values()) {
             int tx = tagBlock.getX(), ty = tagBlock.getY();
             if (Math.abs(tx + ty - x - y) == 1 && tagBlock.isBlank()) {
-//                HiLog.info()
+
 
                 // 添加动画
                 Image curImage = curBlock.getView();
@@ -344,9 +342,9 @@ public class HuarongRoadNine extends AbilitySlice {
                 Component parent = (Component) curImage.getComponentParent();
                 animatorProperty.moveFromX(curImage.getContentPositionX()).moveToX(tarImage.getContentPositionX());
                 animatorProperty.moveFromY(curImage.getContentPositionY()).moveToY(tarImage.getContentPositionY());
-                HiLog.info(label, "blockswap, curX="+curImage.getContentPositionX()+", curY="+curImage.getContentPositionY());
-                HiLog.info(label, "blockswap, tarX="+tarImage.getContentPositionX()+", tarY="+tarImage.getContentPositionY());
-                HiLog.info(label, "blockswap, tarblockX=" + tagBlock.getX()+", tarblockY="+tagBlock.getY() + ", tarblockx=" + tagBlock.getView().getContentPositionX() + ", tarblocky=" + tagBlock.getView().getContentPositionY());
+//                HiLog.info(label, "blockswap, curX="+curImage.getContentPositionX()+", curY="+curImage.getContentPositionY());
+//                HiLog.info(label, "blockswap, tarX="+tarImage.getContentPositionX()+", tarY="+tarImage.getContentPositionY());
+//                HiLog.info(label, "blockswap, tarblockX=" + tagBlock.getX()+", tarblockY="+tagBlock.getY() + ", tarblockx=" + tagBlock.getView().getContentPositionX() + ", tarblocky=" + tagBlock.getView().getContentPositionY());
                 curBlockImage = curImage;
                 curBlockImageX = curImage.getContentPositionX();
                 curBlockImageY = curImage.getContentPositionY();
@@ -576,14 +574,12 @@ public class HuarongRoadNine extends AbilitySlice {
     }
 
     /**
-     * 开始游戏
+     * 开始游戏,并添加响应事件
      */
     void GameBegin() {
         List<MyImage> temp = new LinkedList<>(this.imageList);
-
         // 打乱
         Collections.shuffle(temp);
-
         // 设置chip背景图片
         int k = 0;
         BlockMap.clear();
@@ -600,7 +596,6 @@ public class HuarongRoadNine extends AbilitySlice {
                 BlockMap.put(this.blockList.get(k), new Block(i, j, temp.get(k), blockView, false));
             }
         }
-
 //        添加最后一个空白
         Image blockView = this.blockList.get(jigsawCnt - 1);
         // 设置最后一个不可见
