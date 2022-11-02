@@ -29,7 +29,7 @@
             ohos:left_margin="10fp"
             ohos:text_size="20fp"
             ohos:background_element="$graphic:subbtn"
-            ohos:visibility="hide"
+            ohos:visibility="visible"
             ohos:text_color="#FFFFFF"
             >
         </Button>

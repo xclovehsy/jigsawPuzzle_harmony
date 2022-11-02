@@ -67,7 +67,7 @@ public class jigsawSlice extends AbilitySlice {
         this.jigsawRowCnt = intent.getIntParam("diff", 3);
         this.isShowNum = intent.getBooleanParam("isShowNum", true);
         this.jigsawCnt = (int) Math.pow(this.jigsawRowCnt, 2);
-        this.isSelectFromAlbum = intent.getBooleanParam("isselectFromAlbum", false);
+//        this.isSelectFromAlbum = intent.getBooleanParam("isselectFromAlbum", false);
 
         HiLog.info(label, "jigsawCnt="+jigsawCnt);
 
@@ -86,10 +86,10 @@ public class jigsawSlice extends AbilitySlice {
 //        Image image2 = (Image) findComponentById(ResourceTable.Id_albumImage);
 //        PixelMap p = image.getPixelMap();
 
-        Image cur1= (Image) findComponentById(ResourceTable.Id_albumImage);
-        Image te = new Image(this);
-        te.setHeight(0);
-        te.setWidth(0);
+//        Image cur1= (Image) findComponentById(ResourceTable.Id_albumImage);
+//        Image te = new Image(this);
+//        te.setHeight(0);
+//        te.setWidth(0);
 //        te.setPixelMap(cur1.getPixelMap());
 
 

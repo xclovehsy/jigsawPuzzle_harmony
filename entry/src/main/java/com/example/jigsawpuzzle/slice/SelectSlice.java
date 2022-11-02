@@ -435,7 +435,7 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
                 intent.setParam("jigsawId", jigsawId);
                 intent.setParam("diff", diff);
                 intent.setParam("isShowNum", isShowNum);
-                intent.setParam("isselectFromAlbum", isSelectFromAlbum);
+//                intent.setParam("isselectFromAlbum", isSelectFromAlbum);
                 present(slice, intent);
                 resetAll();
             }else if(model == 1){   // 华融道
@@ -444,7 +444,7 @@ public class SelectSlice extends AbilitySlice implements Component.ClickedListen
                 intent.setParam("jigsawId", jigsawId);
                 intent.setParam("diff", diff);
                 intent.setParam("isShowNum", isShowNum);
-                intent.setParam("isselectFromAlbum", isSelectFromAlbum);
+//                intent.setParam("isselectFromAlbum", isSelectFromAlbum);
                 present(slice, intent);
                 resetAll();
             }
